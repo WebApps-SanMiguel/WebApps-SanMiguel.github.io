@@ -1,0 +1,2600 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1, viewport-fit=cover">
+
+  <meta
+    name="theme-color"
+    content="#0f172a">
+
+  <meta
+    name="description"
+    content="Auxilio Vecinal: envía rápidamente un aviso de emergencia por WhatsApp con tu ubicación.">
+
+  <title>Auxilio Vecinal</title>
+
+
+  <!-- =====================================================
+       PWA
+  ====================================================== -->
+
+  <link rel="manifest" href="manifest.json">
+
+  <meta
+    name="apple-mobile-web-app-capable"
+    content="yes">
+
+  <meta
+    name="apple-mobile-web-app-status-bar-style"
+    content="black-translucent">
+
+
+  <!-- =====================================================
+       ICONOS
+  ====================================================== -->
+
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+
+  <style>
+
+    /* =====================================================
+       VARIABLES
+    ===================================================== */
+
+    :root {
+
+      --bg: #020617;
+      --bg2: #0f172a;
+
+      --text: #ffffff;
+      --muted: #cbd5e1;
+
+      --red: #dc2626;
+      --red-dark: #991b1b;
+
+      --orange: #ea580c;
+      --orange-dark: #9a3412;
+
+      --yellow: #facc15;
+      --yellow-dark: #ca8a04;
+
+      --blue: #2563eb;
+
+      --green: #16a34a;
+
+      --radius: 22px;
+
+    }
+
+
+    /* =====================================================
+       RESET
+    ===================================================== */
+
+    * {
+
+      box-sizing: border-box;
+
+      -webkit-tap-highlight-color: transparent;
+
+    }
+
+
+    html {
+
+      background: var(--bg);
+
+      scroll-behavior: smooth;
+
+    }
+
+
+    body {
+
+      margin: 0;
+
+      min-height: 100dvh;
+
+      background:
+        radial-gradient(
+          circle at top,
+          #1e293b 0%,
+          #0f172a 48%,
+          #020617 100%
+        );
+
+      color: var(--text);
+
+      font-family:
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Arial,
+        sans-serif;
+
+      padding-bottom:
+        calc(35px + env(safe-area-inset-bottom));
+
+    }
+
+
+    button {
+
+      font-family: inherit;
+
+      -webkit-tap-highlight-color: transparent;
+
+    }
+
+
+    /* =====================================================
+       APP
+    ===================================================== */
+
+    .app {
+
+      width: 100%;
+
+      max-width: 650px;
+
+      margin: auto;
+
+      padding:
+        max(14px, env(safe-area-inset-top))
+        14px
+        20px;
+
+    }
+
+
+    /* =====================================================
+       HEADER
+    ===================================================== */
+
+    .header {
+
+      background:
+        rgba(15,23,42,.94);
+
+      border:
+        1px solid rgba(255,255,255,.10);
+
+      border-radius:
+        var(--radius);
+
+      padding: 20px;
+
+      margin-bottom: 18px;
+
+      box-shadow:
+        0 12px 35px rgba(0,0,0,.35);
+
+    }
+
+
+    .header-top {
+
+      display: flex;
+
+      align-items: center;
+
+      gap: 12px;
+
+    }
+
+
+    .logo {
+
+      width: 58px;
+
+      height: 58px;
+
+      flex-shrink: 0;
+
+      display: flex;
+
+      align-items: center;
+
+      justify-content: center;
+
+      border-radius: 18px;
+
+      background:
+        linear-gradient(
+          135deg,
+          #ef4444,
+          #991b1b
+        );
+
+      font-size: 1.9rem;
+
+      box-shadow:
+        0 8px 20px rgba(220,38,38,.30);
+
+    }
+
+
+    .header-title {
+
+      flex: 1;
+
+    }
+
+
+    .header-title h1 {
+
+      margin: 0;
+
+      font-size: 1.55rem;
+
+      line-height: 1.1;
+
+      font-weight: 900;
+
+      letter-spacing: -.03em;
+
+    }
+
+
+    .header-title p {
+
+      margin: 5px 0 0;
+
+      color: var(--muted);
+
+      font-size: .88rem;
+
+      line-height: 1.35;
+
+    }
+
+
+    /* =====================================================
+       INSTALAR
+    ===================================================== */
+
+    #btnInstalar {
+
+      display: none;
+
+      border: 0;
+
+      background: white;
+
+      color: #111827;
+
+      border-radius: 12px;
+
+      padding: 9px 11px;
+
+      font-size: .78rem;
+
+      font-weight: 900;
+
+      cursor: pointer;
+
+    }
+
+
+    /* =====================================================
+       INSTRUCCIÓN
+    ===================================================== */
+
+    .instruction {
+
+      background:
+        rgba(37,99,235,.15);
+
+      border:
+        1px solid rgba(96,165,250,.25);
+
+      border-radius: 18px;
+
+      padding: 14px 16px;
+
+      margin-bottom: 20px;
+
+      display: flex;
+
+      align-items: flex-start;
+
+      gap: 12px;
+
+    }
+
+
+    .instruction-icon {
+
+      color: #60a5fa;
+
+      font-size: 1.35rem;
+
+      flex-shrink: 0;
+
+    }
+
+
+    .instruction strong {
+
+      display: block;
+
+      font-size: .95rem;
+
+      margin-bottom: 3px;
+
+    }
+
+
+    .instruction span {
+
+      display: block;
+
+      color: #cbd5e1;
+
+      font-size: .82rem;
+
+      line-height: 1.4;
+
+    }
+
+
+    /* =====================================================
+       TITULOS DE SECCIÓN
+    ===================================================== */
+
+    .section-title {
+
+      display: flex;
+
+      align-items: center;
+
+      gap: 9px;
+
+      margin:
+        22px
+        4px
+        10px;
+
+      font-size: .78rem;
+
+      font-weight: 900;
+
+      letter-spacing: .08em;
+
+      text-transform: uppercase;
+
+      color: #cbd5e1;
+
+    }
+
+
+    .section-line {
+
+      flex: 1;
+
+      height: 1px;
+
+      background:
+        rgba(255,255,255,.12);
+
+    }
+
+
+    /* =====================================================
+       TARJETAS
+    ===================================================== */
+
+    .emergency-card {
+
+      position: relative;
+
+      overflow: hidden;
+
+      border-radius:
+        var(--radius);
+
+      margin-bottom: 14px;
+
+      box-shadow:
+        0 10px 25px rgba(0,0,0,.28);
+
+    }
+
+
+    .emergency-card::after {
+
+      content: "";
+
+      position: absolute;
+
+      width: 170px;
+
+      height: 170px;
+
+      right: -70px;
+
+      top: -70px;
+
+      border-radius: 50%;
+
+      background:
+        rgba(255,255,255,.09);
+
+      pointer-events: none;
+
+    }
+
+
+    .card-red {
+
+      background:
+        linear-gradient(
+          135deg,
+          var(--red),
+          var(--red-dark)
+        );
+
+    }
+
+
+    .card-orange {
+
+      background:
+        linear-gradient(
+          135deg,
+          var(--orange),
+          var(--orange-dark)
+        );
+
+    }
+
+
+    .card-yellow {
+
+      background:
+        linear-gradient(
+          135deg,
+          var(--yellow),
+          var(--yellow-dark)
+        );
+
+      color: #1c1917;
+
+    }
+
+
+    .card-body {
+
+      position: relative;
+
+      z-index: 2;
+
+      padding: 18px;
+
+    }
+
+
+    /* =====================================================
+       ICONO
+    ===================================================== */
+
+    .emergency-icon {
+
+      width: 60px;
+
+      height: 60px;
+
+      border-radius: 18px;
+
+      display: flex;
+
+      align-items: center;
+
+      justify-content: center;
+
+      background:
+        rgba(255,255,255,.18);
+
+      font-size: 2rem;
+
+      margin-bottom: 12px;
+
+    }
+
+
+    /* =====================================================
+       TITULO EMERGENCIA
+    ===================================================== */
+
+    .emergency-title {
+
+      font-size: 1.35rem;
+
+      font-weight: 900;
+
+      line-height: 1.12;
+
+      margin-bottom: 6px;
+
+    }
+
+
+    .emergency-description {
+
+      font-size: .9rem;
+
+      line-height: 1.4;
+
+      opacity: .94;
+
+      margin-bottom: 16px;
+
+    }
+
+
+    /* =====================================================
+       BOTON PRINCIPAL
+    ===================================================== */
+
+    .emergency-button {
+
+      width: 100%;
+
+      min-height: 60px;
+
+      border: 0;
+
+      border-radius: 15px;
+
+      background: #ffffff;
+
+      color: #111827;
+
+      display: flex;
+
+      align-items: center;
+
+      justify-content: center;
+
+      gap: 9px;
+
+      padding: 12px;
+
+      font-size: .96rem;
+
+      font-weight: 900;
+
+      cursor: pointer;
+
+      box-shadow:
+        0 5px 12px rgba(0,0,0,.20);
+
+      transition:
+        transform .1s ease,
+        opacity .1s ease;
+
+    }
+
+
+    .emergency-button:active {
+
+      transform: scale(.97);
+
+    }
+
+
+    .emergency-button:disabled {
+
+      opacity: .75;
+
+      cursor: wait;
+
+    }
+
+
+    .card-yellow .emergency-button {
+
+      background: #111827;
+
+      color: white;
+
+    }
+
+
+    .location-note {
+
+      display: flex;
+
+      justify-content: center;
+
+      align-items: center;
+
+      gap: 5px;
+
+      margin-top: 9px;
+
+      font-size: .72rem;
+
+      opacity: .82;
+
+      text-align: center;
+
+    }
+
+
+    /* =====================================================
+       BOTON NECESITO AYUDA
+    ===================================================== */
+
+    .help-area {
+
+      margin-top: 25px;
+
+      margin-bottom: 20px;
+
+    }
+
+
+    .help-button {
+
+      width: 100%;
+
+      min-height: 74px;
+
+      border:
+        2px solid rgba(255,255,255,.18);
+
+      border-radius: 20px;
+
+      background:
+        linear-gradient(
+          135deg,
+          #1e293b,
+          #0f172a
+        );
+
+      color: white;
+
+      display: flex;
+
+      align-items: center;
+
+      justify-content: center;
+
+      gap: 12px;
+
+      font-size: 1.2rem;
+
+      font-weight: 900;
+
+      cursor: pointer;
+
+      box-shadow:
+        0 10px 25px rgba(0,0,0,.3);
+
+    }
+
+
+    .help-button:active {
+
+      transform: scale(.98);
+
+    }
+
+
+    .help-button i {
+
+      font-size: 1.7rem;
+
+      color: #f87171;
+
+    }
+
+
+    /* =====================================================
+       MODAL
+    ===================================================== */
+
+    .modal-overlay {
+
+      position: fixed;
+
+      inset: 0;
+
+      z-index: 1000;
+
+      display: none;
+
+      align-items: flex-end;
+
+      justify-content: center;
+
+      background:
+        rgba(0,0,0,.75);
+
+      padding: 12px;
+
+    }
+
+
+    .modal-overlay.visible {
+
+      display: flex;
+
+    }
+
+
+    .modal {
+
+      width: 100%;
+
+      max-width: 620px;
+
+      max-height: 90dvh;
+
+      overflow-y: auto;
+
+      background: #0f172a;
+
+      border:
+        1px solid rgba(255,255,255,.12);
+
+      border-radius:
+        25px 25px 18px 18px;
+
+      padding: 20px;
+
+      box-shadow:
+        0 -10px 50px rgba(0,0,0,.5);
+
+    }
+
+
+    .modal-header {
+
+      display: flex;
+
+      align-items: center;
+
+      justify-content: space-between;
+
+      margin-bottom: 15px;
+
+    }
+
+
+    .modal-header h2 {
+
+      margin: 0;
+
+      font-size: 1.35rem;
+
+      font-weight: 900;
+
+    }
+
+
+    .close-button {
+
+      width: 44px;
+
+      height: 44px;
+
+      border: 0;
+
+      border-radius: 50%;
+
+      background:
+        rgba(255,255,255,.1);
+
+      color: white;
+
+      font-size: 1.15rem;
+
+      cursor: pointer;
+
+    }
+
+
+    .choice {
+
+      width: 100%;
+
+      min-height: 64px;
+
+      border: 0;
+
+      border-radius: 15px;
+
+      background: #1e293b;
+
+      color: white;
+
+      margin-bottom: 10px;
+
+      padding: 12px 15px;
+
+      display: flex;
+
+      align-items: center;
+
+      gap: 14px;
+
+      text-align: left;
+
+      font-size: 1rem;
+
+      font-weight: 800;
+
+      cursor: pointer;
+
+    }
+
+
+    .choice:active {
+
+      transform: scale(.98);
+
+    }
+
+
+    .choice-icon {
+
+      width: 44px;
+
+      height: 44px;
+
+      border-radius: 12px;
+
+      display: flex;
+
+      align-items: center;
+
+      justify-content: center;
+
+      background:
+        rgba(255,255,255,.1);
+
+      font-size: 1.4rem;
+
+      flex-shrink: 0;
+
+    }
+
+
+    /* =====================================================
+       ESTADO GPS
+    ===================================================== */
+
+    .status-overlay {
+
+      position: fixed;
+
+      inset: 0;
+
+      z-index: 2000;
+
+      display: none;
+
+      align-items: center;
+
+      justify-content: center;
+
+      background:
+        rgba(2,6,23,.94);
+
+      padding: 25px;
+
+    }
+
+
+    .status-overlay.visible {
+
+      display: flex;
+
+    }
+
+
+    .status-box {
+
+      width: 100%;
+
+      max-width: 420px;
+
+      text-align: center;
+
+    }
+
+
+    .status-icon {
+
+      width: 90px;
+
+      height: 90px;
+
+      margin:
+        0 auto
+        20px;
+
+      border-radius: 28px;
+
+      display: flex;
+
+      align-items: center;
+
+      justify-content: center;
+
+      background:
+        rgba(37,99,235,.16);
+
+      color: #60a5fa;
+
+      font-size: 2.8rem;
+
+    }
+
+
+    .status-box h2 {
+
+      margin:
+        0
+        0
+        10px;
+
+      font-size: 1.45rem;
+
+      font-weight: 900;
+
+    }
+
+
+    .status-box p {
+
+      margin: 0;
+
+      color: #cbd5e1;
+
+      line-height: 1.5;
+
+      font-size: .95rem;
+
+    }
+
+
+    /* =====================================================
+       BOTONES DEL ERROR
+    ===================================================== */
+
+    .error-actions {
+
+      margin-top: 22px;
+
+      display: none;
+
+      gap: 10px;
+
+      flex-direction: column;
+
+    }
+
+
+    .error-actions.visible {
+
+      display: flex;
+
+    }
+
+
+    .error-button {
+
+      width: 100%;
+
+      min-height: 54px;
+
+      border: 0;
+
+      border-radius: 14px;
+
+      font-size: .95rem;
+
+      font-weight: 900;
+
+      cursor: pointer;
+
+    }
+
+
+    .retry-button {
+
+      background: #2563eb;
+
+      color: white;
+
+    }
+
+
+    .without-location-button {
+
+      background: white;
+
+      color: #111827;
+
+    }
+
+
+    .cancel-button {
+
+      background:
+        rgba(255,255,255,.10);
+
+      color: white;
+
+    }
+
+
+    /* =====================================================
+       SPINNER
+    ===================================================== */
+
+    .spinner {
+
+      width: 23px;
+
+      height: 23px;
+
+      border:
+        3px solid rgba(255,255,255,.30);
+
+      border-top-color: #ffffff;
+
+      border-radius: 50%;
+
+      animation:
+        spin .7s linear infinite;
+
+      flex-shrink: 0;
+
+    }
+
+
+    @keyframes spin {
+
+      to {
+
+        transform:
+          rotate(360deg);
+
+      }
+
+    }
+
+
+    /* =====================================================
+       FOOTER
+    ===================================================== */
+
+    footer {
+
+      color: #94a3b8;
+
+      text-align: center;
+
+      font-size: .7rem;
+
+      line-height: 1.5;
+
+      padding:
+        5px
+        8px
+        20px;
+
+    }
+
+
+    /* =====================================================
+       DESKTOP
+    ===================================================== */
+
+    @media (min-width: 650px) {
+
+      .app {
+
+        padding-top: 30px;
+
+      }
+
+      .modal-overlay {
+
+        align-items: center;
+
+      }
+
+      .modal {
+
+        border-radius: 25px;
+
+      }
+
+    }
+
+  </style>
+
+</head>
+
+
+<body>
+
+
+<div class="app">
+
+
+  <!-- ==================================================
+       ENCABEZADO
+  =================================================== -->
+
+  <header class="header">
+
+    <div class="header-top">
+
+      <div class="logo">
+        🚨
+      </div>
+
+      <div class="header-title">
+
+        <h1>
+          Auxilio Vecinal
+        </h1>
+
+        <p>
+          Pide ayuda rápidamente a tus vecinos.
+        </p>
+
+      </div>
+
+
+      <button
+        id="btnInstalar"
+        aria-label="Instalar aplicación">
+
+        Instalar
+
+      </button>
+
+    </div>
+
+  </header>
+
+
+  <!-- ==================================================
+       INSTRUCCIÓN
+  =================================================== -->
+
+  <div class="instruction">
+
+    <div class="instruction-icon">
+
+      <i class="bi bi-info-circle-fill"></i>
+
+    </div>
+
+    <div>
+
+      <strong>
+        ¿Necesitas ayuda?
+      </strong>
+
+      <span>
+        Toca el botón de la emergencia.
+        Prepararemos el mensaje y tu ubicación
+        para abrir WhatsApp.
+      </span>
+
+    </div>
+
+  </div>
+
+
+  <!-- ==================================================
+       ATENCIÓN INMEDIATA
+  =================================================== -->
+
+  <div class="section-title">
+
+    <span style="color:#f87171;">
+      <i class="bi bi-exclamation-octagon-fill"></i>
+    </span>
+
+    Atención inmediata
+
+    <span class="section-line"></span>
+
+  </div>
+
+
+  <!-- ==================================================
+       INCENDIO
+  =================================================== -->
+
+  <article class="emergency-card card-red">
+
+    <div class="card-body">
+
+      <div class="emergency-icon">
+        🔥
+      </div>
+
+      <div class="emergency-title">
+        Hay un incendio
+      </div>
+
+      <div class="emergency-description">
+        Hay fuego y necesito ayuda.
+      </div>
+
+      <button
+        class="emergency-button"
+        onclick="iniciarEmergencia('incendio', this)">
+
+        <i class="bi bi-whatsapp"></i>
+
+        AVISAR Y ENVIAR UBICACIÓN
+
+      </button>
+
+      <div class="location-note">
+
+        <i class="bi bi-geo-alt-fill"></i>
+
+        La ubicación se agrega automáticamente
+
+      </div>
+
+    </div>
+
+  </article>
+
+
+  <!-- ==================================================
+       FUGA DE GAS
+  =================================================== -->
+
+  <article class="emergency-card card-red">
+
+    <div class="card-body">
+
+      <div class="emergency-icon">
+        💨
+      </div>
+
+      <div class="emergency-title">
+        Hay una fuga de gas
+      </div>
+
+      <div class="emergency-description">
+        Hay una posible fuga de gas y necesito ayuda.
+      </div>
+
+      <button
+        class="emergency-button"
+        onclick="iniciarEmergencia('fugaGas', this)">
+
+        <i class="bi bi-whatsapp"></i>
+
+        AVISAR Y ENVIAR UBICACIÓN
+
+      </button>
+
+      <div class="location-note">
+
+        <i class="bi bi-geo-alt-fill"></i>
+
+        La ubicación se agrega automáticamente
+
+      </div>
+
+    </div>
+
+  </article>
+
+
+  <!-- ==================================================
+       URGENCIAS
+  =================================================== -->
+
+  <div class="section-title">
+
+    <span style="color:#fb923c;">
+      <i class="bi bi-exclamation-triangle-fill"></i>
+    </span>
+
+    Urgencias
+
+    <span class="section-line"></span>
+
+  </div>
+
+
+  <!-- ==================================================
+       ACCIDENTE
+  =================================================== -->
+
+  <article class="emergency-card card-orange">
+
+    <div class="card-body">
+
+      <div class="emergency-icon">
+        🏍️
+      </div>
+
+      <div class="emergency-title">
+        Hay un accidente
+      </div>
+
+      <div class="emergency-description">
+        Hay una persona que necesita ayuda.
+      </div>
+
+      <button
+        class="emergency-button"
+        onclick="iniciarEmergencia('accidenteMoto', this)">
+
+        <i class="bi bi-whatsapp"></i>
+
+        AVISAR Y ENVIAR UBICACIÓN
+
+      </button>
+
+      <div class="location-note">
+
+        <i class="bi bi-geo-alt-fill"></i>
+
+        La ubicación se agrega automáticamente
+
+      </div>
+
+    </div>
+
+  </article>
+
+
+  <!-- ==================================================
+       PELEA
+  =================================================== -->
+
+  <article class="emergency-card card-orange">
+
+    <div class="card-body">
+
+      <div class="emergency-icon">
+        👊
+      </div>
+
+      <div class="emergency-title">
+        Hay una pelea
+      </div>
+
+      <div class="emergency-description">
+        Hay una pelea y se necesita ayuda.
+      </div>
+
+      <button
+        class="emergency-button"
+        onclick="iniciarEmergencia('rina', this)">
+
+        <i class="bi bi-whatsapp"></i>
+
+        AVISAR Y ENVIAR UBICACIÓN
+
+      </button>
+
+      <div class="location-note">
+
+        <i class="bi bi-geo-alt-fill"></i>
+
+        La ubicación se agrega automáticamente
+
+      </div>
+
+    </div>
+
+  </article>
+
+
+  <!-- ==================================================
+       OTROS PROBLEMAS
+  =================================================== -->
+
+  <div class="section-title">
+
+    <span style="color:#facc15;">
+      <i class="bi bi-shield-exclamation"></i>
+    </span>
+
+    Otros problemas
+
+    <span class="section-line"></span>
+
+  </div>
+
+
+  <!-- ==================================================
+       ACOSO
+  =================================================== -->
+
+  <article class="emergency-card card-yellow">
+
+    <div class="card-body">
+
+      <div class="emergency-icon">
+        ⚠️
+      </div>
+
+      <div class="emergency-title">
+        Me están molestando
+      </div>
+
+      <div class="emergency-description">
+        Estoy viviendo una situación de acoso y necesito ayuda.
+      </div>
+
+      <button
+        class="emergency-button"
+        onclick="iniciarEmergencia('acoso', this)">
+
+        <i class="bi bi-whatsapp"></i>
+
+        AVISAR Y ENVIAR UBICACIÓN
+
+      </button>
+
+      <div class="location-note">
+
+        <i class="bi bi-geo-alt-fill"></i>
+
+        La ubicación se agrega automáticamente
+
+      </div>
+
+    </div>
+
+  </article>
+
+
+  <!-- ==================================================
+       PERSONA
+  =================================================== -->
+
+  <article class="emergency-card card-yellow">
+
+    <div class="card-body">
+
+      <div class="emergency-icon">
+        👤
+      </div>
+
+      <div class="emergency-title">
+        Hay una persona que me preocupa
+      </div>
+
+      <div class="emergency-description">
+        Necesito avisar a mis vecinos sobre una situación.
+      </div>
+
+      <button
+        class="emergency-button"
+        onclick="iniciarEmergencia('personaSospechosa', this)">
+
+        <i class="bi bi-whatsapp"></i>
+
+        AVISAR Y ENVIAR UBICACIÓN
+
+      </button>
+
+      <div class="location-note">
+
+        <i class="bi bi-geo-alt-fill"></i>
+
+        La ubicación se agrega automáticamente
+
+      </div>
+
+    </div>
+
+  </article>
+
+
+  <!-- ==================================================
+       NECESITO AYUDA
+  =================================================== -->
+
+  <div class="help-area">
+
+    <button
+      class="help-button"
+      onclick="abrirNecesitoAyuda()">
+
+      <i class="bi bi-life-preserver"></i>
+
+      <span>
+        NECESITO AYUDA
+      </span>
+
+    </button>
+
+  </div>
+
+
+  <!-- ==================================================
+       FOOTER
+  =================================================== -->
+
+  <footer>
+
+    🔒 No almacenamos información personal.
+
+    <br>
+
+    La ubicación solamente se utiliza
+    para preparar el aviso de WhatsApp.
+
+    <br><br>
+
+    Esta aplicación no sustituye a los
+    servicios oficiales de emergencia.
+
+  </footer>
+
+
+</div>
+
+
+<!-- ======================================================
+     MODAL NECESITO AYUDA
+======================================================= -->
+
+<div
+  id="helpModal"
+  class="modal-overlay"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="helpTitle">
+
+  <div class="modal">
+
+    <div class="modal-header">
+
+      <h2 id="helpTitle">
+        ¿Qué está pasando?
+      </h2>
+
+      <button
+        class="close-button"
+        onclick="cerrarNecesitoAyuda()"
+        aria-label="Cerrar">
+
+        <i class="bi bi-x-lg"></i>
+
+      </button>
+
+    </div>
+
+
+    <button
+      class="choice"
+      onclick="seleccionarEmergencia('incendio')">
+
+      <span class="choice-icon">
+        🔥
+      </span>
+
+      <span>
+        Hay un incendio
+      </span>
+
+    </button>
+
+
+    <button
+      class="choice"
+      onclick="seleccionarEmergencia('fugaGas')">
+
+      <span class="choice-icon">
+        💨
+      </span>
+
+      <span>
+        Hay una fuga de gas
+      </span>
+
+    </button>
+
+
+    <button
+      class="choice"
+      onclick="seleccionarEmergencia('accidenteMoto')">
+
+      <span class="choice-icon">
+        🏍️
+      </span>
+
+      <span>
+        Hay un accidente
+      </span>
+
+    </button>
+
+
+    <button
+      class="choice"
+      onclick="seleccionarEmergencia('rina')">
+
+      <span class="choice-icon">
+        👊
+      </span>
+
+      <span>
+        Hay una pelea
+      </span>
+
+    </button>
+
+
+    <button
+      class="choice"
+      onclick="seleccionarEmergencia('acoso')">
+
+      <span class="choice-icon">
+        ⚠️
+      </span>
+
+      <span>
+        Me están molestando
+      </span>
+
+    </button>
+
+
+    <button
+      class="choice"
+      onclick="seleccionarEmergencia('personaSospechosa')">
+
+      <span class="choice-icon">
+        👤
+      </span>
+
+      <span>
+        Hay una persona que me preocupa
+      </span>
+
+    </button>
+
+  </div>
+
+</div>
+
+
+<!-- ======================================================
+     ESTADO DE UBICACIÓN
+======================================================= -->
+
+<div
+  id="statusOverlay"
+  class="status-overlay">
+
+  <div class="status-box">
+
+    <div
+      id="statusIcon"
+      class="status-icon">
+
+      <div class="spinner"></div>
+
+    </div>
+
+    <h2 id="statusTitle">
+      Preparando aviso...
+    </h2>
+
+    <p id="statusText">
+      Estamos obteniendo tu ubicación.
+    </p>
+
+
+    <!-- ACCIONES SI FALLA LA UBICACIÓN -->
+
+    <div
+      id="errorActions"
+      class="error-actions">
+
+      <button
+        class="error-button retry-button"
+        onclick="reintentarUbicacion()">
+
+        <i class="bi bi-arrow-clockwise me-1"></i>
+
+        INTENTAR DE NUEVO
+
+      </button>
+
+
+      <button
+        class="error-button without-location-button"
+        onclick="continuarSinUbicacion()">
+
+        <i class="bi bi-whatsapp me-1"></i>
+
+        ABRIR WHATSAPP SIN UBICACIÓN
+
+      </button>
+
+
+      <button
+        class="error-button cancel-button"
+        onclick="cancelarEmergencia()">
+
+        CANCELAR
+
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<script>
+
+
+  /* =====================================================
+     MENSAJES
+  ===================================================== */
+
+  const mensajes = {
+
+    fugaGas:
+      `🚨 AUXILIO VECINAL
+
+💨 HAY UNA POSIBLE FUGA DE GAS
+
+Se solicita ayuda.
+
+📍 UBICACIÓN:`,
+
+    incendio:
+      `🚨 AUXILIO VECINAL
+
+🔥 HAY UN INCENDIO
+
+Se solicita ayuda.
+
+📍 UBICACIÓN:`,
+
+    accidenteMoto:
+      `🚨 AUXILIO VECINAL
+
+🏍️ HAY UN ACCIDENTE
+
+Hay una persona que necesita ayuda.
+
+📍 UBICACIÓN:`,
+
+    rina:
+      `🚨 AUXILIO VECINAL
+
+👊 HAY UNA PELEA
+
+Se solicita ayuda.
+
+📍 UBICACIÓN:`,
+
+    acoso:
+      `🚨 AUXILIO VECINAL
+
+⚠️ ESTOY VIVIENDO UNA SITUACIÓN DE ACOSO
+
+Necesito ayuda.
+
+📍 UBICACIÓN:`,
+
+    personaSospechosa:
+      `🚨 AUXILIO VECINAL
+
+👤 HAY UNA PERSONA QUE ME PREOCUPA
+
+Necesito avisar a mis vecinos.
+
+📍 UBICACIÓN:`
+
+  };
+
+
+  /* =====================================================
+     VARIABLES
+  ===================================================== */
+
+  let emergenciaActual = null;
+
+  let botonActual = null;
+
+  let textoBotonOriginal = "";
+
+
+  /* =====================================================
+     ELEMENTOS
+  ===================================================== */
+
+  const helpModal =
+    document.getElementById(
+      "helpModal"
+    );
+
+
+  const statusOverlay =
+    document.getElementById(
+      "statusOverlay"
+    );
+
+
+  const statusTitle =
+    document.getElementById(
+      "statusTitle"
+    );
+
+
+  const statusText =
+    document.getElementById(
+      "statusText"
+    );
+
+
+  const statusIcon =
+    document.getElementById(
+      "statusIcon"
+    );
+
+
+  const errorActions =
+    document.getElementById(
+      "errorActions"
+    );
+
+
+  /* =====================================================
+     WHATSAPP
+  ===================================================== */
+
+  function abrirWhatsApp(mensaje) {
+
+    const url =
+      "https://wa.me/?text=" +
+      encodeURIComponent(mensaje);
+
+    window.location.href =
+      url;
+
+  }
+
+
+  /* =====================================================
+     INICIAR EMERGENCIA
+  ===================================================== */
+
+  function iniciarEmergencia(
+    tipo,
+    boton
+  ) {
+
+    if (!mensajes[tipo]) {
+      return;
+    }
+
+
+    emergenciaActual =
+      tipo;
+
+
+    botonActual =
+      boton;
+
+
+    textoBotonOriginal =
+      boton.innerHTML;
+
+
+    boton.disabled =
+      true;
+
+
+    boton.innerHTML =
+
+      '<div class="spinner"></div>' +
+      ' PREPARANDO AVISO...';
+
+
+    mostrarEstadoInicial();
+
+
+    if (!navigator.geolocation) {
+
+      mostrarErrorUbicacion({
+        code: 2,
+        message:
+          "Geolocalización no disponible."
+      });
+
+      return;
+
+    }
+
+
+    obtenerUbicacionRapida()
+
+      .then(function(position) {
+
+        procesarUbicacion(
+          position
+        );
+
+      })
+
+      .catch(function(error) {
+
+        console.warn(
+          "No se obtuvo ubicación:",
+          error
+        );
+
+        mostrarErrorUbicacion(
+          error
+        );
+
+      });
+
+  }
+
+
+  /* =====================================================
+     UBICACIÓN RÁPIDA
+  ===================================================== */
+
+  function obtenerUbicacionRapida() {
+
+    return new Promise(
+      function(resolve, reject) {
+
+        navigator.geolocation.getCurrentPosition(
+
+          function(position) {
+
+            console.log(
+              "Latitud:",
+              position.coords.latitude
+            );
+
+
+            console.log(
+              "Longitud:",
+              position.coords.longitude
+            );
+
+
+            console.log(
+              "Precisión:",
+              position.coords.accuracy,
+              "metros"
+            );
+
+
+            resolve(
+              position
+            );
+
+          },
+
+
+          function(error) {
+
+            console.warn(
+              "Error GPS:",
+              error
+            );
+
+
+            reject(
+              error
+            );
+
+          },
+
+
+          {
+
+            /*
+             * MUY IMPORTANTE:
+             *
+             * Pedimos alta precisión.
+             */
+
+            enableHighAccuracy:
+              true,
+
+
+            /*
+             * No utilizar una ubicación
+             * vieja almacenada por el navegador.
+             */
+
+            maximumAge:
+              0,
+
+
+            /*
+             * La aplicación no esperará
+             * más de 3 segundos.
+             */
+
+            timeout:
+              3000
+
+          }
+
+        );
+
+      }
+    );
+
+  }
+
+
+  /* =====================================================
+     PROCESAR UBICACIÓN
+  ===================================================== */
+
+  function procesarUbicacion(
+    position
+  ) {
+
+    const lat =
+      position.coords.latitude;
+
+
+    const lon =
+      position.coords.longitude;
+
+
+    const accuracy =
+      position.coords.accuracy;
+
+
+    console.log(
+      "Ubicación obtenida:",
+      lat,
+      lon,
+      accuracy
+    );
+
+
+    const mapa =
+      `https://www.google.com/maps?q=${lat},${lon}`;
+
+
+    let mensajeFinal =
+      mensajes[emergenciaActual] +
+      `\n${mapa}`;
+
+
+    if (
+      Number.isFinite(
+        accuracy
+      )
+    ) {
+
+      mensajeFinal +=
+        `\n\n🎯 Precisión aproximada: ${Math.round(accuracy)} metros`;
+
+    }
+
+
+    mostrarEstadoExito();
+
+
+    /*
+     * Pequeña pausa para que el usuario
+     * vea "Ubicación lista".
+     *
+     * Solo 350 ms.
+     */
+
+    setTimeout(
+      function() {
+
+        abrirWhatsApp(
+          mensajeFinal
+        );
+
+      },
+      350
+    );
+
+  }
+
+
+  /* =====================================================
+     ESTADO INICIAL
+  ===================================================== */
+
+  function mostrarEstadoInicial() {
+
+    statusTitle.textContent =
+      "Preparando aviso...";
+
+
+    statusText.textContent =
+      "Obteniendo tu ubicación.";
+
+
+    statusIcon.innerHTML =
+      '<div class="spinner"></div>';
+
+
+    errorActions.classList.remove(
+      "visible"
+    );
+
+
+    statusOverlay.classList.add(
+      "visible"
+    );
+
+  }
+
+
+  /* =====================================================
+     ESTADO EXITOSO
+  ===================================================== */
+
+  function mostrarEstadoExito() {
+
+    statusTitle.textContent =
+      "¡Ubicación lista!";
+
+
+    statusText.textContent =
+      "Abriendo WhatsApp para que puedas enviar el aviso.";
+
+
+    statusIcon.innerHTML =
+      '<i class="bi bi-check-circle-fill" style="color:#4ade80;"></i>';
+
+
+    errorActions.classList.remove(
+      "visible"
+    );
+
+  }
+
+
+  /* =====================================================
+     ERROR DE UBICACIÓN
+  ===================================================== */
+
+  function mostrarErrorUbicacion(
+    error
+  ) {
+
+    statusIcon.innerHTML =
+      '<i class="bi bi-geo-alt-fill" style="color:#f87171;"></i>';
+
+
+    statusTitle.textContent =
+      "No pudimos obtener tu ubicación";
+
+
+    let texto =
+      "Puedes intentarlo nuevamente o abrir WhatsApp sin ubicación.";
+
+
+    if (
+      error &&
+      error.code === 1
+    ) {
+
+      texto =
+        "El teléfono no permitió usar tu ubicación. Puedes intentar nuevamente o abrir WhatsApp sin ubicación.";
+
+    }
+
+
+    else if (
+      error &&
+      error.code === 2
+    ) {
+
+      texto =
+        "No pudimos determinar tu ubicación. Comprueba que la ubicación del teléfono esté activada.";
+
+    }
+
+
+    else if (
+      error &&
+      error.code === 3
+    ) {
+
+      texto =
+        "La ubicación tardó demasiado. No queremos hacerte esperar.";
+
+    }
+
+
+    statusText.textContent =
+      texto;
+
+
+    errorActions.classList.add(
+      "visible"
+    );
+
+  }
+
+
+  /* =====================================================
+     REINTENTAR
+  ===================================================== */
+
+  function reintentarUbicacion() {
+
+    if (
+      !emergenciaActual ||
+      !botonActual
+    ) {
+
+      return;
+
+    }
+
+
+    mostrarEstadoInicial();
+
+
+    obtenerUbicacionRapida()
+
+      .then(function(position) {
+
+        procesarUbicacion(
+          position
+        );
+
+      })
+
+      .catch(function(error) {
+
+        mostrarErrorUbicacion(
+          error
+        );
+
+      });
+
+  }
+
+
+  /* =====================================================
+     CONTINUAR SIN UBICACIÓN
+  ===================================================== */
+
+  function continuarSinUbicacion() {
+
+    if (
+      !emergenciaActual
+    ) {
+
+      return;
+
+    }
+
+
+    const mensaje =
+      mensajes[emergenciaActual];
+
+
+    statusTitle.textContent =
+      "Abriendo WhatsApp";
+
+
+    statusText.textContent =
+      "El aviso se abrirá sin ubicación.";
+
+
+    statusIcon.innerHTML =
+      '<i class="bi bi-whatsapp" style="color:#4ade80;"></i>';
+
+
+    errorActions.classList.remove(
+      "visible"
+    );
+
+
+    setTimeout(
+      function() {
+
+        /*
+         * Quitamos "📍 UBICACIÓN:"
+         * porque no existe ubicación.
+         */
+
+        const mensajeSinUbicacion =
+          mensaje.replace(
+            /\n📍 UBICACIÓN:$/,
+            ""
+          );
+
+
+        abrirWhatsApp(
+          mensajeSinUbicacion
+        );
+
+      },
+      300
+    );
+
+  }
+
+
+  /* =====================================================
+     CANCELAR
+  ===================================================== */
+
+  function cancelarEmergencia() {
+
+    statusOverlay.classList.remove(
+      "visible"
+    );
+
+
+    restaurarBoton();
+
+  }
+
+
+  /* =====================================================
+     RESTAURAR BOTÓN
+  ===================================================== */
+
+  function restaurarBoton() {
+
+    if (!botonActual) {
+      return;
+    }
+
+
+    botonActual.disabled =
+      false;
+
+
+    botonActual.innerHTML =
+      textoBotonOriginal;
+
+
+    botonActual =
+      null;
+
+
+    emergenciaActual =
+      null;
+
+  }
+
+
+  /* =====================================================
+     MODAL NECESITO AYUDA
+  ===================================================== */
+
+  function abrirNecesitoAyuda() {
+
+    helpModal.classList.add(
+      "visible"
+    );
+
+  }
+
+
+  function cerrarNecesitoAyuda() {
+
+    helpModal.classList.remove(
+      "visible"
+    );
+
+  }
+
+
+  function seleccionarEmergencia(
+    tipo
+  ) {
+
+    cerrarNecesitoAyuda();
+
+
+    setTimeout(
+      function() {
+
+        const boton =
+          document.querySelector(
+            `[onclick="iniciarEmergencia('${tipo}', this)"]`
+          );
+
+
+        if (boton) {
+
+          iniciarEmergencia(
+            tipo,
+            boton
+          );
+
+        }
+
+      },
+      150
+    );
+
+  }
+
+
+  /* =====================================================
+     CERRAR MODAL TOCANDO FUERA
+  ===================================================== */
+
+  helpModal.addEventListener(
+    "click",
+    function(event) {
+
+      if (
+        event.target ===
+        helpModal
+      ) {
+
+        cerrarNecesitoAyuda();
+
+      }
+
+    }
+  );
+
+
+  /* =====================================================
+     ESC
+  ===================================================== */
+
+  document.addEventListener(
+    "keydown",
+    function(event) {
+
+      if (
+        event.key === "Escape"
+      ) {
+
+        cerrarNecesitoAyuda();
+
+      }
+
+    }
+  );
+
+
+  /* =====================================================
+     PWA INSTALL
+  ===================================================== */
+
+  let deferredPrompt =
+    null;
+
+
+  const btnInstalar =
+    document.getElementById(
+      "btnInstalar"
+    );
+
+
+  window.addEventListener(
+    "beforeinstallprompt",
+    function(event) {
+
+      event.preventDefault();
+
+      deferredPrompt =
+        event;
+
+      btnInstalar.style.display =
+        "block";
+
+    }
+  );
+
+
+  btnInstalar.addEventListener(
+    "click",
+    async function() {
+
+      if (
+        !deferredPrompt
+      ) {
+
+        return;
+
+      }
+
+
+      deferredPrompt.prompt();
+
+
+      await deferredPrompt.userChoice;
+
+
+      deferredPrompt =
+        null;
+
+
+      btnInstalar.style.display =
+        "none";
+
+    }
+  );
+
+
+  /* =====================================================
+     SERVICE WORKER
+  ===================================================== */
+
+  if (
+    "serviceWorker" in
+    navigator
+  ) {
+
+    window.addEventListener(
+      "load",
+      function() {
+
+        navigator.serviceWorker
+          .register("sw.js")
+
+          .then(function() {
+
+            console.log(
+              "Auxilio Vecinal: PWA lista."
+            );
+
+          })
+
+          .catch(function(error) {
+
+            console.error(
+              "Error registrando Service Worker:",
+              error
+            );
+
+          });
+
+      }
+    );
+
+  }
+
+
+</script>
+
+
+</body>
+
+</html>
