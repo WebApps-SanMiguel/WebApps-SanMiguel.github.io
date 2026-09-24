@@ -3,7 +3,7 @@
   "short_name": "Web Apps San Miguel",
   "start_url": "./index.html",
   "display": "standalone",
-  "background_color": "#ffffff",
+  "background_color": "#000000",
   "theme_color": "#111827",
   "description": "Web Apps San Miguel",
   "icons": [
