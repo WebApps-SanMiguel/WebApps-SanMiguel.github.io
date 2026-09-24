@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Pizzería Demo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+
+  <!-- Tailwind -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Bootstrap Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+<link rel="manifest" href="manifest.json">
+  <style>
+    .fade-in {
+      animation: fadeIn 0.6s ease-in-out;
+    }
+    @keyframes fadeIn {
+      from {opacity: 0; transform: translateY(10px);}
+      to {opacity: 1; transform: translateY(0);}
+    }
+  </style>
+
+  <script>
+    function pedirPedido(texto) {
+      const mensaje = `Hola, quiero pedir:\n${texto}\n\n📍 Dirección:\n💳 Forma de pago:`;
+
+      if (navigator.share) {
+        navigator.share({
+          title: "Pedido de pizza",
+          text: mensaje
+        });
+      } else {
+        const url = "https://wa.me/?text=" + encodeURIComponent(mensaje);
+        window.open(url, "_blank");
+      }
+    }
+  </script>
+</head>
+
+<body class="bg-gray-100">
+
+  <!-- HEADER -->
+  <header class="bg-red-600 text-white p-4 shadow-lg flex justify-between items-center">
+    <div>
+      <h1 class="text-xl font-bold">🍕 Pizzería Demo</h1>
+      <p class="text-xs opacity-80">Pide en segundos</p>
+    </div>
+
+    <!-- BOTÓN INSTALAR -->
+    <button id="installBtn" class="bg-white text-red-600 px-3 py-2 rounded-lg text-sm flex items-center gap-2">
+      <i class="bi bi-download"></i> Instalar
+    </button>
+  </header>
+
+  <!-- COMBOS -->
+  <section class="p-6">
+    <h2 class="text-2xl font-bold mb-4 text-center">🔥 Combos Especiales</h2>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+      <div class="bg-white rounded-2xl shadow-lg p-4 border-2 border-green-500 fade-in">
+        <h3 class="font-bold">🍕 Combo Individual</h3>
+        <p class="text-sm text-gray-600">1 pizza + refresco</p>
+        <p class="text-lg font-bold mt-2">$180 MXN</p>
+        <button onclick="pedirPedido('Combo Individual (1 pizza + refresco)')"
+          class="mt-4 w-full bg-green-500 text-white py-2 rounded-xl flex justify-center gap-2">
+          <i class="bi bi-whatsapp"></i> Pedir
+        </button>
+      </div>
+
+      <div class="bg-white rounded-2xl shadow-lg p-4 border-2 border-red-500 relative fade-in">
+        <span class="absolute top-2 right-2 bg-red-600 text-white text-xs px-2 py-1 rounded-full">
+          🔥 Popular
+        </span>
+        <h3 class="font-bold">🍕🍕 Combo Pareja</h3>
+        <p class="text-sm text-gray-600">2 pizzas + refresco grande</p>
+        <p class="text-lg font-bold mt-2">$299 MXN</p>
+        <button onclick="pedirPedido('Combo Pareja (2 pizzas + refresco grande)')"
+          class="mt-4 w-full bg-green-500 text-white py-2 rounded-xl flex justify-center gap-2">
+          <i class="bi bi-whatsapp"></i> Pedir
+        </button>
+      </div>
+
+      <div class="bg-white rounded-2xl shadow-lg p-4 border-2 border-yellow-500 fade-in">
+        <h3 class="font-bold">👨‍👩‍👧‍👦 Combo Familiar</h3>
+        <p class="text-sm text-gray-600">3 pizzas + refresco + envío</p>
+        <p class="text-lg font-bold mt-2">$420 MXN</p>
+        <button onclick="pedirPedido('Combo Familiar (3 pizzas + refresco + envío)')"
+          class="mt-4 w-full bg-green-500 text-white py-2 rounded-xl flex justify-center gap-2">
+          <i class="bi bi-whatsapp"></i> Pedir
+        </button>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- CATALOGO -->
+  <main class="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+
+    <div class="bg-white rounded-2xl shadow-md overflow-hidden fade-in">
+      <img src="https://images.unsplash.com/photo-1600891964599-f61ba0e24092?q=80&w=800"
+           onerror="this.src='https://via.placeholder.com/800x600?text=Pizza'"
+           class="w-full h-48 object-cover">
+      <div class="p-4">
+        <h2 class="font-bold">Pizza Pepperoni</h2>
+        <p class="text-sm text-gray-600">Clásica con extra pepperoni</p>
+        <p class="font-bold mt-2">$150 MXN</p>
+        <button onclick="pedirPedido('Pizza Pepperoni')"
+          class="mt-4 w-full bg-green-500 text-white py-2 rounded-xl flex justify-center gap-2">
+          <i class="bi bi-whatsapp"></i> Pedir
+        </button>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-2xl shadow-md overflow-hidden fade-in">
+      <img src="https://images.unsplash.com/photo-1513104890138-7c749659a591?q=80&w=800"
+           onerror="this.src='https://via.placeholder.com/800x600?text=Pizza'"
+           class="w-full h-48 object-cover">
+      <div class="p-4">
+        <h2 class="font-bold">Pizza Mexicana</h2>
+        <p class="text-sm text-gray-600">Chorizo, jalapeño y cebolla</p>
+        <p class="font-bold mt-2">$160 MXN</p>
+        <button onclick="pedirPedido('Pizza Mexicana')"
+          class="mt-4 w-full bg-green-500 text-white py-2 rounded-xl flex justify-center gap-2">
+          <i class="bi bi-whatsapp"></i> Pedir
+        </button>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- BOTÓN FLOTANTE -->
+  <button onclick="pedirPedido('Hola, quiero información del menú')"
+    class="fixed bottom-6 right-4 bg-green-500 text-white p-4 rounded-full shadow-lg">
+    <i class="bi bi-whatsapp text-xl"></i>
+  </button>
+
+  <!-- FOOTER -->
+  <footer class="bg-gray-900 text-white text-center p-6 mt-6">
+    <p class="font-semibold">🚀 Deja de imprimir volantes</p>
+    <p class="text-sm">Recibe pedidos directo en WhatsApp</p>
+  </footer>
+
+  <!-- SCRIPT INSTALAR -->
+<script>
+  let deferredPrompt = null;
+  const installBtn = document.getElementById('installBtn');
+
+  // Seguridad: verificar que el botón exista
+  if (installBtn) {
+
+    // Detecta si la app es instalable
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+
+      // opcional: puedes habilitar visualmente el botón
+      installBtn.style.opacity = "1";
+      installBtn.style.pointerEvents = "auto";
+    });
+
+    installBtn.addEventListener('click', async () => {
+      if (!deferredPrompt) {
+        alert("📲 Para instalar, abre el menú del navegador y selecciona 'Agregar a pantalla de inicio'");
+        return;
+      }
+
+      deferredPrompt.prompt();
+
+      const { outcome } = await deferredPrompt.userChoice;
+
+      if (outcome === 'accepted') {
+        console.log('Usuario instaló la app');
+      } else {
+        console.log('Usuario canceló instalación');
+      }
+
+      // limpiar estado
+      deferredPrompt = null;
+    });
+
+    // Cuando ya se instaló
+    window.addEventListener('appinstalled', () => {
+      console.log('PWA instalada correctamente');
+
+      // ocultar botón opcionalmente
+      installBtn.style.display = "none";
+    });
+  }
+</script>
+
+</body>
+</html>

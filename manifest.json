@@ -1,0 +1,21 @@
+{
+  "name": "Web Apps San Miguel",
+  "short_name": "Web Apps San Miguel",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#111827",
+  "description": "Web Apps San Miguel",
+  "icons": [
+    {
+      "src": "angel192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "angel512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
