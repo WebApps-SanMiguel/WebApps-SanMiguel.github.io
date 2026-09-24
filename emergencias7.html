@@ -15,7 +15,7 @@
 
   <meta
     name="description"
-    content="Auxilio Vecinal: envía rápidamente un aviso de emergencia por WhatsApp con tu ubicación.">
+    content="Auxilio Vecinal - Envía rápidamente un aviso de emergencia por WhatsApp con tu ubicación.">
 
   <title>Auxilio Vecinal</title>
 
@@ -24,7 +24,9 @@
        PWA
   ====================================================== -->
 
-  <link rel="manifest" href="manifest.json">
+  <link
+    rel="manifest"
+    href="manifest.json">
 
   <meta
     name="apple-mobile-web-app-capable"
@@ -43,6 +45,10 @@
     rel="stylesheet"
     href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
+
+  <!-- =====================================================
+       ESTILOS
+  ====================================================== -->
 
   <style>
 
@@ -67,9 +73,7 @@
       --yellow: #facc15;
       --yellow-dark: #ca8a04;
 
-      --blue: #2563eb;
-
-      --green: #16a34a;
+      --green: #25d366;
 
       --radius: 22px;
 
@@ -91,7 +95,8 @@
 
     html {
 
-      background: var(--bg);
+      background:
+        var(--bg);
 
       scroll-behavior: smooth;
 
@@ -108,11 +113,12 @@
         radial-gradient(
           circle at top,
           #1e293b 0%,
-          #0f172a 48%,
+          #0f172a 50%,
           #020617 100%
         );
 
-      color: var(--text);
+      color:
+        var(--text);
 
       font-family:
         system-ui,
@@ -124,7 +130,10 @@
         sans-serif;
 
       padding-bottom:
-        calc(35px + env(safe-area-inset-bottom));
+        calc(
+          30px +
+          env(safe-area-inset-bottom)
+        );
 
     }
 
@@ -133,13 +142,14 @@
 
       font-family: inherit;
 
-      -webkit-tap-highlight-color: transparent;
+      -webkit-tap-highlight-color:
+        transparent;
 
     }
 
 
     /* =====================================================
-       APP
+       CONTENEDOR
     ===================================================== */
 
     .app {
@@ -151,7 +161,10 @@
       margin: auto;
 
       padding:
-        max(14px, env(safe-area-inset-top))
+        max(
+          14px,
+          env(safe-area-inset-top)
+        )
         14px
         20px;
 
@@ -168,28 +181,30 @@
         rgba(15,23,42,.94);
 
       border:
-        1px solid rgba(255,255,255,.10);
+        1px solid
+        rgba(255,255,255,.10);
 
       border-radius:
         var(--radius);
 
-      padding: 20px;
+      padding: 18px;
 
-      margin-bottom: 18px;
+      margin-bottom: 16px;
 
       box-shadow:
-        0 12px 35px rgba(0,0,0,.35);
+        0 12px 35px
+        rgba(0,0,0,.35);
 
     }
 
 
-    .header-top {
+    .header-content {
 
       display: flex;
 
       align-items: center;
 
-      gap: 12px;
+      gap: 13px;
 
     }
 
@@ -220,40 +235,44 @@
       font-size: 1.9rem;
 
       box-shadow:
-        0 8px 20px rgba(220,38,38,.30);
+        0 8px 20px
+        rgba(220,38,38,.30);
 
     }
 
 
-    .header-title {
+    .header-text {
 
       flex: 1;
 
     }
 
 
-    .header-title h1 {
+    .header-title {
 
       margin: 0;
 
-      font-size: 1.55rem;
-
-      line-height: 1.1;
+      font-size: 1.45rem;
 
       font-weight: 900;
 
-      letter-spacing: -.03em;
+      line-height: 1.1;
+
+      letter-spacing:
+        -.03em;
 
     }
 
 
-    .header-title p {
+    .header-subtitle {
 
-      margin: 5px 0 0;
+      margin:
+        5px 0 0;
 
-      color: var(--muted);
+      color:
+        var(--muted);
 
-      font-size: .88rem;
+      font-size: .85rem;
 
       line-height: 1.35;
 
@@ -261,7 +280,7 @@
 
 
     /* =====================================================
-       INSTALAR
+       BOTON INSTALAR
     ===================================================== */
 
     #btnInstalar {
@@ -278,7 +297,7 @@
 
       padding: 9px 11px;
 
-      font-size: .78rem;
+      font-size: .75rem;
 
       font-weight: 900;
 
@@ -288,61 +307,64 @@
 
 
     /* =====================================================
-       INSTRUCCIÓN
+       AVISO
     ===================================================== */
 
-    .instruction {
-
-      background:
-        rgba(37,99,235,.15);
-
-      border:
-        1px solid rgba(96,165,250,.25);
-
-      border-radius: 18px;
-
-      padding: 14px 16px;
-
-      margin-bottom: 20px;
+    .info-box {
 
       display: flex;
 
       align-items: flex-start;
 
-      gap: 12px;
+      gap: 11px;
+
+      background:
+        rgba(37,99,235,.14);
+
+      border:
+        1px solid
+        rgba(96,165,250,.24);
+
+      border-radius: 18px;
+
+      padding: 14px 15px;
+
+      margin-bottom: 21px;
 
     }
 
 
-    .instruction-icon {
+    .info-icon {
 
-      color: #60a5fa;
+      color:
+        #60a5fa;
 
-      font-size: 1.35rem;
+      font-size: 1.3rem;
 
       flex-shrink: 0;
 
     }
 
 
-    .instruction strong {
+    .info-box strong {
 
       display: block;
 
-      font-size: .95rem;
+      font-size: .92rem;
 
       margin-bottom: 3px;
 
     }
 
 
-    .instruction span {
+    .info-box span {
 
       display: block;
 
-      color: #cbd5e1;
+      color:
+        #cbd5e1;
 
-      font-size: .82rem;
+      font-size: .79rem;
 
       line-height: 1.4;
 
@@ -350,7 +372,7 @@
 
 
     /* =====================================================
-       TITULOS DE SECCIÓN
+       SECCIONES
     ===================================================== */
 
     .section-title {
@@ -359,22 +381,23 @@
 
       align-items: center;
 
-      gap: 9px;
+      gap: 8px;
 
       margin:
         22px
         4px
         10px;
 
-      font-size: .78rem;
+      color:
+        #cbd5e1;
+
+      font-size: .76rem;
 
       font-weight: 900;
 
       letter-spacing: .08em;
 
       text-transform: uppercase;
-
-      color: #cbd5e1;
 
     }
 
@@ -404,10 +427,13 @@
       border-radius:
         var(--radius);
 
-      margin-bottom: 14px;
+      margin-bottom: 13px;
+
+      color: white;
 
       box-shadow:
-        0 10px 25px rgba(0,0,0,.28);
+        0 10px 25px
+        rgba(0,0,0,.28);
 
     }
 
@@ -418,13 +444,13 @@
 
       position: absolute;
 
-      width: 170px;
+      width: 160px;
 
-      height: 170px;
+      height: 160px;
 
-      right: -70px;
+      right: -65px;
 
-      top: -70px;
+      top: -65px;
 
       border-radius: 50%;
 
@@ -441,8 +467,8 @@
       background:
         linear-gradient(
           135deg,
-          var(--red),
-          var(--red-dark)
+          #ef4444,
+          #991b1b
         );
 
     }
@@ -453,8 +479,8 @@
       background:
         linear-gradient(
           135deg,
-          var(--orange),
-          var(--orange-dark)
+          #fb923c,
+          #c2410c
         );
 
     }
@@ -465,11 +491,12 @@
       background:
         linear-gradient(
           135deg,
-          var(--yellow),
-          var(--yellow-dark)
+          #facc15,
+          #ca8a04
         );
 
-      color: #1c1917;
+      color:
+        #1c1917;
 
     }
 
@@ -491,11 +518,9 @@
 
     .emergency-icon {
 
-      width: 60px;
+      width: 58px;
 
-      height: 60px;
-
-      border-radius: 18px;
+      height: 58px;
 
       display: flex;
 
@@ -503,63 +528,66 @@
 
       justify-content: center;
 
+      border-radius: 17px;
+
       background:
         rgba(255,255,255,.18);
 
-      font-size: 2rem;
+      font-size: 1.9rem;
 
-      margin-bottom: 12px;
+      margin-bottom: 11px;
 
     }
 
 
     /* =====================================================
-       TITULO EMERGENCIA
+       TITULO
     ===================================================== */
 
     .emergency-title {
 
-      font-size: 1.35rem;
+      font-size: 1.28rem;
 
       font-weight: 900;
 
-      line-height: 1.12;
+      line-height: 1.15;
 
-      margin-bottom: 6px;
+      margin-bottom: 5px;
 
     }
 
 
     .emergency-description {
 
-      font-size: .9rem;
+      font-size: .86rem;
 
       line-height: 1.4;
 
-      opacity: .94;
+      opacity: .93;
 
-      margin-bottom: 16px;
+      margin-bottom: 15px;
 
     }
 
 
     /* =====================================================
-       BOTON PRINCIPAL
+       BOTON WHATSAPP
     ===================================================== */
 
     .emergency-button {
 
       width: 100%;
 
-      min-height: 60px;
+      min-height: 58px;
 
       border: 0;
 
       border-radius: 15px;
 
-      background: #ffffff;
+      background:
+        var(--green);
 
-      color: #111827;
+      color: white;
 
       display: flex;
 
@@ -571,14 +599,15 @@
 
       padding: 12px;
 
-      font-size: .96rem;
+      font-size: .93rem;
 
       font-weight: 900;
 
       cursor: pointer;
 
       box-shadow:
-        0 5px 12px rgba(0,0,0,.20);
+        0 5px 12px
+        rgba(0,0,0,.20);
 
       transition:
         transform .1s ease,
@@ -589,25 +618,24 @@
 
     .emergency-button:active {
 
-      transform: scale(.97);
+      transform:
+        scale(.975);
 
     }
 
 
     .emergency-button:disabled {
 
-      opacity: .75;
+      opacity: .78;
 
       cursor: wait;
 
     }
 
 
-    .card-yellow .emergency-button {
+    .emergency-button i {
 
-      background: #111827;
-
-      color: white;
+      font-size: 1.25rem;
 
     }
 
@@ -616,15 +644,15 @@
 
       display: flex;
 
-      justify-content: center;
-
       align-items: center;
+
+      justify-content: center;
 
       gap: 5px;
 
-      margin-top: 9px;
+      margin-top: 8px;
 
-      font-size: .72rem;
+      font-size: .69rem;
 
       opacity: .82;
 
@@ -639,9 +667,10 @@
 
     .help-area {
 
-      margin-top: 25px;
-
-      margin-bottom: 20px;
+      margin:
+        25px
+        0
+        18px;
 
     }
 
@@ -650,10 +679,11 @@
 
       width: 100%;
 
-      min-height: 74px;
+      min-height: 68px;
 
       border:
-        2px solid rgba(255,255,255,.18);
+        2px solid
+        rgba(255,255,255,.15);
 
       border-radius: 20px;
 
@@ -672,32 +702,31 @@
 
       justify-content: center;
 
-      gap: 12px;
+      gap: 11px;
 
-      font-size: 1.2rem;
+      font-size: 1.08rem;
 
       font-weight: 900;
 
       cursor: pointer;
-
-      box-shadow:
-        0 10px 25px rgba(0,0,0,.3);
 
     }
 
 
     .help-button:active {
 
-      transform: scale(.98);
+      transform:
+        scale(.98);
 
     }
 
 
     .help-button i {
 
-      font-size: 1.7rem;
+      color:
+        #f87171;
 
-      color: #f87171;
+      font-size: 1.55rem;
 
     }
 
@@ -721,7 +750,7 @@
       justify-content: center;
 
       background:
-        rgba(0,0,0,.75);
+        rgba(0,0,0,.76);
 
       padding: 12px;
 
@@ -745,18 +774,24 @@
 
       overflow-y: auto;
 
-      background: #0f172a;
+      background:
+        #0f172a;
 
       border:
-        1px solid rgba(255,255,255,.12);
+        1px solid
+        rgba(255,255,255,.12);
 
       border-radius:
-        25px 25px 18px 18px;
+        25px
+        25px
+        18px
+        18px;
 
       padding: 20px;
 
       box-shadow:
-        0 -10px 50px rgba(0,0,0,.5);
+        0 -10px 50px
+        rgba(0,0,0,.5);
 
     }
 
@@ -778,7 +813,7 @@
 
       margin: 0;
 
-      font-size: 1.35rem;
+      font-size: 1.3rem;
 
       font-weight: 900;
 
@@ -796,11 +831,11 @@
       border-radius: 50%;
 
       background:
-        rgba(255,255,255,.1);
+        rgba(255,255,255,.10);
 
       color: white;
 
-      font-size: 1.15rem;
+      font-size: 1.1rem;
 
       cursor: pointer;
 
@@ -811,29 +846,30 @@
 
       width: 100%;
 
-      min-height: 64px;
+      min-height: 62px;
 
       border: 0;
 
       border-radius: 15px;
 
-      background: #1e293b;
+      background:
+        #1e293b;
 
       color: white;
 
       margin-bottom: 10px;
 
-      padding: 12px 15px;
+      padding: 10px 14px;
 
       display: flex;
 
       align-items: center;
 
-      gap: 14px;
+      gap: 13px;
 
       text-align: left;
 
-      font-size: 1rem;
+      font-size: .95rem;
 
       font-weight: 800;
 
@@ -844,16 +880,17 @@
 
     .choice:active {
 
-      transform: scale(.98);
+      transform:
+        scale(.98);
 
     }
 
 
     .choice-icon {
 
-      width: 44px;
+      width: 43px;
 
-      height: 44px;
+      height: 43px;
 
       border-radius: 12px;
 
@@ -864,9 +901,9 @@
       justify-content: center;
 
       background:
-        rgba(255,255,255,.1);
+        rgba(255,255,255,.10);
 
-      font-size: 1.4rem;
+      font-size: 1.35rem;
 
       flex-shrink: 0;
 
@@ -892,7 +929,7 @@
       justify-content: center;
 
       background:
-        rgba(2,6,23,.94);
+        rgba(2,6,23,.95);
 
       padding: 25px;
 
@@ -919,15 +956,16 @@
 
     .status-icon {
 
-      width: 90px;
+      width: 88px;
 
-      height: 90px;
+      height: 88px;
 
       margin:
-        0 auto
+        0
+        auto
         20px;
 
-      border-radius: 28px;
+      border-radius: 27px;
 
       display: flex;
 
@@ -936,11 +974,12 @@
       justify-content: center;
 
       background:
-        rgba(37,99,235,.16);
+        rgba(37,99,235,.15);
 
-      color: #60a5fa;
+      color:
+        #60a5fa;
 
-      font-size: 2.8rem;
+      font-size: 2.7rem;
 
     }
 
@@ -950,9 +989,9 @@
       margin:
         0
         0
-        10px;
+        9px;
 
-      font-size: 1.45rem;
+      font-size: 1.4rem;
 
       font-weight: 900;
 
@@ -963,28 +1002,29 @@
 
       margin: 0;
 
-      color: #cbd5e1;
+      color:
+        #cbd5e1;
 
       line-height: 1.5;
 
-      font-size: .95rem;
+      font-size: .92rem;
 
     }
 
 
     /* =====================================================
-       BOTONES DEL ERROR
+       ACCIONES ERROR
     ===================================================== */
 
     .error-actions {
 
-      margin-top: 22px;
-
       display: none;
 
-      gap: 10px;
-
       flex-direction: column;
+
+      gap: 9px;
+
+      margin-top: 21px;
 
     }
 
@@ -1000,13 +1040,13 @@
 
       width: 100%;
 
-      min-height: 54px;
+      min-height: 53px;
 
       border: 0;
 
       border-radius: 14px;
 
-      font-size: .95rem;
+      font-size: .9rem;
 
       font-weight: 900;
 
@@ -1017,7 +1057,8 @@
 
     .retry-button {
 
-      background: #2563eb;
+      background:
+        #2563eb;
 
       color: white;
 
@@ -1026,9 +1067,11 @@
 
     .without-location-button {
 
-      background: white;
+      background:
+        white;
 
-      color: #111827;
+      color:
+        #111827;
 
     }
 
@@ -1054,9 +1097,11 @@
       height: 23px;
 
       border:
-        3px solid rgba(255,255,255,.30);
+        3px solid
+        rgba(255,255,255,.30);
 
-      border-top-color: #ffffff;
+      border-top-color:
+        white;
 
       border-radius: 50%;
 
@@ -1086,11 +1131,12 @@
 
     footer {
 
-      color: #94a3b8;
+      color:
+        #94a3b8;
 
       text-align: center;
 
-      font-size: .7rem;
+      font-size: .68rem;
 
       line-height: 1.5;
 
@@ -1103,14 +1149,14 @@
 
 
     /* =====================================================
-       DESKTOP
+       ESCRITORIO
     ===================================================== */
 
     @media (min-width: 650px) {
 
       .app {
 
-        padding-top: 30px;
+        padding-top: 28px;
 
       }
 
@@ -1122,7 +1168,8 @@
 
       .modal {
 
-        border-radius: 25px;
+        border-radius:
+          25px;
 
       }
 
@@ -1140,24 +1187,25 @@
 
 
   <!-- ==================================================
-       ENCABEZADO
+       HEADER
   =================================================== -->
 
   <header class="header">
 
-    <div class="header-top">
+    <div class="header-content">
 
       <div class="logo">
         🚨
       </div>
 
-      <div class="header-title">
 
-        <h1>
+      <div class="header-text">
+
+        <h1 class="header-title">
           Auxilio Vecinal
         </h1>
 
-        <p>
+        <p class="header-subtitle">
           Pide ayuda rápidamente a tus vecinos.
         </p>
 
@@ -1178,12 +1226,12 @@
 
 
   <!-- ==================================================
-       INSTRUCCIÓN
+       INFORMACIÓN
   =================================================== -->
 
-  <div class="instruction">
+  <div class="info-box">
 
-    <div class="instruction-icon">
+    <div class="info-icon">
 
       <i class="bi bi-info-circle-fill"></i>
 
@@ -1196,9 +1244,8 @@
       </strong>
 
       <span>
-        Toca el botón de la emergencia.
-        Prepararemos el mensaje y tu ubicación
-        para abrir WhatsApp.
+        Toca la emergencia. La aplicación obtendrá
+        tu ubicación y abrirá WhatsApp con el aviso listo.
       </span>
 
     </div>
@@ -1235,23 +1282,27 @@
         🔥
       </div>
 
+
       <div class="emergency-title">
         Hay un incendio
       </div>
+
 
       <div class="emergency-description">
         Hay fuego y necesito ayuda.
       </div>
 
+
       <button
         class="emergency-button"
-        onclick="iniciarEmergencia('incendio', this)">
+        onclick="enviarUbicacion('incendio', this)">
 
         <i class="bi bi-whatsapp"></i>
 
         AVISAR Y ENVIAR UBICACIÓN
 
       </button>
+
 
       <div class="location-note">
 
@@ -1278,23 +1329,27 @@
         💨
       </div>
 
+
       <div class="emergency-title">
         Hay una fuga de gas
       </div>
+
 
       <div class="emergency-description">
         Hay una posible fuga de gas y necesito ayuda.
       </div>
 
+
       <button
         class="emergency-button"
-        onclick="iniciarEmergencia('fugaGas', this)">
+        onclick="enviarUbicacion('fugaGas', this)">
 
         <i class="bi bi-whatsapp"></i>
 
         AVISAR Y ENVIAR UBICACIÓN
 
       </button>
+
 
       <div class="location-note">
 
@@ -1338,23 +1393,27 @@
         🏍️
       </div>
 
+
       <div class="emergency-title">
         Hay un accidente
       </div>
+
 
       <div class="emergency-description">
         Hay una persona que necesita ayuda.
       </div>
 
+
       <button
         class="emergency-button"
-        onclick="iniciarEmergencia('accidenteMoto', this)">
+        onclick="enviarUbicacion('accidenteMoto', this)">
 
         <i class="bi bi-whatsapp"></i>
 
         AVISAR Y ENVIAR UBICACIÓN
 
       </button>
+
 
       <div class="location-note">
 
@@ -1370,7 +1429,7 @@
 
 
   <!-- ==================================================
-       PELEA
+       RIÑA
   =================================================== -->
 
   <article class="emergency-card card-orange">
@@ -1381,23 +1440,27 @@
         👊
       </div>
 
+
       <div class="emergency-title">
         Hay una pelea
       </div>
+
 
       <div class="emergency-description">
         Hay una pelea y se necesita ayuda.
       </div>
 
+
       <button
         class="emergency-button"
-        onclick="iniciarEmergencia('rina', this)">
+        onclick="enviarUbicacion('rina', this)">
 
         <i class="bi bi-whatsapp"></i>
 
         AVISAR Y ENVIAR UBICACIÓN
 
       </button>
+
 
       <div class="location-note">
 
@@ -1413,7 +1476,7 @@
 
 
   <!-- ==================================================
-       OTROS PROBLEMAS
+       OTROS REPORTES
   =================================================== -->
 
   <div class="section-title">
@@ -1422,7 +1485,7 @@
       <i class="bi bi-shield-exclamation"></i>
     </span>
 
-    Otros problemas
+    Otros reportes
 
     <span class="section-line"></span>
 
@@ -1441,23 +1504,27 @@
         ⚠️
       </div>
 
+
       <div class="emergency-title">
         Me están molestando
       </div>
+
 
       <div class="emergency-description">
         Estoy viviendo una situación de acoso y necesito ayuda.
       </div>
 
+
       <button
         class="emergency-button"
-        onclick="iniciarEmergencia('acoso', this)">
+        onclick="enviarUbicacion('acoso', this)">
 
         <i class="bi bi-whatsapp"></i>
 
         AVISAR Y ENVIAR UBICACIÓN
 
       </button>
+
 
       <div class="location-note">
 
@@ -1473,7 +1540,7 @@
 
 
   <!-- ==================================================
-       PERSONA
+       PERSONA SOSPECHOSA
   =================================================== -->
 
   <article class="emergency-card card-yellow">
@@ -1484,23 +1551,27 @@
         👤
       </div>
 
+
       <div class="emergency-title">
         Hay una persona que me preocupa
       </div>
+
 
       <div class="emergency-description">
         Necesito avisar a mis vecinos sobre una situación.
       </div>
 
+
       <button
         class="emergency-button"
-        onclick="iniciarEmergencia('personaSospechosa', this)">
+        onclick="enviarUbicacion('personaSospechosa', this)">
 
         <i class="bi bi-whatsapp"></i>
 
         AVISAR Y ENVIAR UBICACIÓN
 
       </button>
+
 
       <div class="location-note">
 
@@ -1527,9 +1598,7 @@
 
       <i class="bi bi-life-preserver"></i>
 
-      <span>
-        NECESITO AYUDA
-      </span>
+      NECESITO AYUDA
 
     </button>
 
@@ -1551,33 +1620,32 @@
 
     <br><br>
 
-    Esta aplicación no sustituye a los
-    servicios oficiales de emergencia.
+    Esta aplicación no sustituye
+    a los servicios oficiales de emergencia.
 
   </footer>
-
 
 </div>
 
 
 <!-- ======================================================
-     MODAL NECESITO AYUDA
+     MODAL
 ======================================================= -->
 
 <div
   id="helpModal"
   class="modal-overlay"
   role="dialog"
-  aria-modal="true"
-  aria-labelledby="helpTitle">
+  aria-modal="true">
 
   <div class="modal">
 
     <div class="modal-header">
 
-      <h2 id="helpTitle">
+      <h2>
         ¿Qué está pasando?
       </h2>
+
 
       <button
         class="close-button"
@@ -1686,7 +1754,7 @@
 
 
 <!-- ======================================================
-     ESTADO DE UBICACIÓN
+     ESTADO GPS
 ======================================================= -->
 
 <div
@@ -1694,6 +1762,7 @@
   class="status-overlay">
 
   <div class="status-box">
+
 
     <div
       id="statusIcon"
@@ -1703,26 +1772,27 @@
 
     </div>
 
+
     <h2 id="statusTitle">
-      Preparando aviso...
+      Obteniendo ubicación...
     </h2>
 
+
     <p id="statusText">
-      Estamos obteniendo tu ubicación.
+      Espera un momento.
     </p>
 
-
-    <!-- ACCIONES SI FALLA LA UBICACIÓN -->
 
     <div
       id="errorActions"
       class="error-actions">
 
+
       <button
         class="error-button retry-button"
         onclick="reintentarUbicacion()">
 
-        <i class="bi bi-arrow-clockwise me-1"></i>
+        <i class="bi bi-arrow-clockwise"></i>
 
         INTENTAR DE NUEVO
 
@@ -1733,7 +1803,7 @@
         class="error-button without-location-button"
         onclick="continuarSinUbicacion()">
 
-        <i class="bi bi-whatsapp me-1"></i>
+        <i class="bi bi-whatsapp"></i>
 
         ABRIR WHATSAPP SIN UBICACIÓN
 
@@ -1747,6 +1817,7 @@
         CANCELAR
 
       </button>
+
 
     </div>
 
@@ -1769,54 +1840,42 @@
 
 💨 HAY UNA POSIBLE FUGA DE GAS
 
-Se solicita ayuda.
-
-📍 UBICACIÓN:`,
+Se solicita ayuda.`,
 
     incendio:
       `🚨 AUXILIO VECINAL
 
 🔥 HAY UN INCENDIO
 
-Se solicita ayuda.
-
-📍 UBICACIÓN:`,
+Se solicita ayuda.`,
 
     accidenteMoto:
       `🚨 AUXILIO VECINAL
 
 🏍️ HAY UN ACCIDENTE
 
-Hay una persona que necesita ayuda.
-
-📍 UBICACIÓN:`,
+Hay una persona que necesita ayuda.`,
 
     rina:
       `🚨 AUXILIO VECINAL
 
 👊 HAY UNA PELEA
 
-Se solicita ayuda.
-
-📍 UBICACIÓN:`,
+Se solicita ayuda.`,
 
     acoso:
       `🚨 AUXILIO VECINAL
 
 ⚠️ ESTOY VIVIENDO UNA SITUACIÓN DE ACOSO
 
-Necesito ayuda.
-
-📍 UBICACIÓN:`,
+Necesito ayuda.`,
 
     personaSospechosa:
       `🚨 AUXILIO VECINAL
 
 👤 HAY UNA PERSONA QUE ME PREOCUPA
 
-Necesito avisar a mis vecinos.
-
-📍 UBICACIÓN:`
+Necesito avisar a mis vecinos.`
 
   };
 
@@ -1825,11 +1884,14 @@ Necesito avisar a mis vecinos.
      VARIABLES
   ===================================================== */
 
-  let emergenciaActual = null;
+  let emergenciaActual =
+    null;
 
-  let botonActual = null;
+  let botonActual =
+    null;
 
-  let textoBotonOriginal = "";
+  let contenidoOriginal =
+    "";
 
 
   /* =====================================================
@@ -1848,6 +1910,12 @@ Necesito avisar a mis vecinos.
     );
 
 
+  const statusIcon =
+    document.getElementById(
+      "statusIcon"
+    );
+
+
   const statusTitle =
     document.getElementById(
       "statusTitle"
@@ -1857,12 +1925,6 @@ Necesito avisar a mis vecinos.
   const statusText =
     document.getElementById(
       "statusText"
-    );
-
-
-  const statusIcon =
-    document.getElementById(
-      "statusIcon"
     );
 
 
@@ -1876,11 +1938,16 @@ Necesito avisar a mis vecinos.
      WHATSAPP
   ===================================================== */
 
-  function abrirWhatsApp(mensaje) {
+  function abrirWhatsApp(
+    mensaje
+  ) {
 
     const url =
       "https://wa.me/?text=" +
-      encodeURIComponent(mensaje);
+      encodeURIComponent(
+        mensaje
+      );
+
 
     window.location.href =
       url;
@@ -1889,265 +1956,287 @@ Necesito avisar a mis vecinos.
 
 
   /* =====================================================
-     INICIAR EMERGENCIA
+     FUNCIÓN PRINCIPAL DE UBICACIÓN
+     
+     ESTA ES LA FUNCIÓN QUE YA COMPROBASTE
+     QUE FUNCIONA CORRECTAMENTE EN ANDROID.
   ===================================================== */
 
-  function iniciarEmergencia(
+  function enviarUbicacion(
     tipo,
     boton
   ) {
 
-    if (!mensajes[tipo]) {
+
+    /*
+     * Comprobar disponibilidad.
+     */
+
+    if (
+      !navigator.geolocation
+    ) {
+
+      alert(
+        "Tu teléfono no permite obtener la ubicación."
+      );
+
       return;
+
     }
 
+
+    /*
+     * Guardar estado.
+     */
 
     emergenciaActual =
       tipo;
 
-
     botonActual =
       boton;
 
-
-    textoBotonOriginal =
+    contenidoOriginal =
       boton.innerHTML;
 
+
+    /*
+     * Desactivar botón.
+     */
 
     boton.disabled =
       true;
 
 
     boton.innerHTML =
-
-      '<div class="spinner"></div>' +
-      ' PREPARANDO AVISO...';
-
-
-    mostrarEstadoInicial();
-
-
-    if (!navigator.geolocation) {
-
-      mostrarErrorUbicacion({
-        code: 2,
-        message:
-          "Geolocalización no disponible."
-      });
-
-      return;
-
-    }
-
-
-    obtenerUbicacionRapida()
-
-      .then(function(position) {
-
-        procesarUbicacion(
-          position
-        );
-
-      })
-
-      .catch(function(error) {
-
-        console.warn(
-          "No se obtuvo ubicación:",
-          error
-        );
-
-        mostrarErrorUbicacion(
-          error
-        );
-
-      });
-
-  }
-
-
-  /* =====================================================
-     UBICACIÓN RÁPIDA
-  ===================================================== */
-
-  function obtenerUbicacionRapida() {
-
-    return new Promise(
-      function(resolve, reject) {
-
-        navigator.geolocation.getCurrentPosition(
-
-          function(position) {
-
-            console.log(
-              "Latitud:",
-              position.coords.latitude
-            );
-
-
-            console.log(
-              "Longitud:",
-              position.coords.longitude
-            );
-
-
-            console.log(
-              "Precisión:",
-              position.coords.accuracy,
-              "metros"
-            );
-
-
-            resolve(
-              position
-            );
-
-          },
-
-
-          function(error) {
-
-            console.warn(
-              "Error GPS:",
-              error
-            );
-
-
-            reject(
-              error
-            );
-
-          },
-
-
-          {
-
-            /*
-             * MUY IMPORTANTE:
-             *
-             * Pedimos alta precisión.
-             */
-
-            enableHighAccuracy:
-              true,
-
-
-            /*
-             * No utilizar una ubicación
-             * vieja almacenada por el navegador.
-             */
-
-            maximumAge:
-              0,
-
-
-            /*
-             * La aplicación no esperará
-             * más de 3 segundos.
-             */
-
-            timeout:
-              3000
-
-          }
-
-        );
-
-      }
-    );
-
-  }
-
-
-  /* =====================================================
-     PROCESAR UBICACIÓN
-  ===================================================== */
-
-  function procesarUbicacion(
-    position
-  ) {
-
-    const lat =
-      position.coords.latitude;
-
-
-    const lon =
-      position.coords.longitude;
-
-
-    const accuracy =
-      position.coords.accuracy;
-
-
-    console.log(
-      "Ubicación obtenida:",
-      lat,
-      lon,
-      accuracy
-    );
-
-
-    const mapa =
-      `https://www.google.com/maps?q=${lat},${lon}`;
-
-
-    let mensajeFinal =
-      mensajes[emergenciaActual] +
-      `\n${mapa}`;
-
-
-    if (
-      Number.isFinite(
-        accuracy
-      )
-    ) {
-
-      mensajeFinal +=
-        `\n\n🎯 Precisión aproximada: ${Math.round(accuracy)} metros`;
-
-    }
-
-
-    mostrarEstadoExito();
+      '<span class="spinner"></span>' +
+      ' Obteniendo ubicación...';
 
 
     /*
-     * Pequeña pausa para que el usuario
-     * vea "Ubicación lista".
-     *
-     * Solo 350 ms.
+     * Mostrar pantalla de estado.
      */
 
-    setTimeout(
-      function() {
+    mostrarGPS();
 
-        abrirWhatsApp(
-          mensajeFinal
+
+    /*
+     * ==================================================
+     * GPS
+     * ==================================================
+     */
+
+    navigator.geolocation.getCurrentPosition(
+
+
+      /*
+       * ==================================================
+       * ÉXITO
+       * ==================================================
+       */
+
+      function(position) {
+
+
+        const lat =
+          position.coords.latitude;
+
+
+        const lon =
+          position.coords.longitude;
+
+
+        const accuracy =
+          position.coords.accuracy;
+
+
+        /*
+         * Mostrar información en consola.
+         */
+
+        console.log(
+          "LAT:",
+          lat
+        );
+
+
+        console.log(
+          "LON:",
+          lon
+        );
+
+
+        console.log(
+          "PRECISIÓN:",
+          accuracy,
+          "metros"
+        );
+
+
+        /*
+         * Crear enlace de Google Maps.
+         */
+
+        const mapa =
+          `https://www.google.com/maps?q=${lat},${lon}`;
+
+
+        /*
+         * Crear mensaje.
+         */
+
+        const mensajeFinal =
+          mensajes[tipo] +
+
+          `\n\n📍 UBICACIÓN:\n${mapa}` +
+
+          `\n🎯 Precisión aproximada: ${Math.round(accuracy)} metros`;
+
+
+        /*
+         * Restaurar botón.
+         */
+
+        boton.disabled =
+          false;
+
+
+        boton.innerHTML =
+          contenidoOriginal;
+
+
+        /*
+         * Mostrar éxito brevemente.
+         */
+
+        statusIcon.innerHTML =
+          '<i class="bi bi-check-circle-fill" ' +
+          'style="color:#4ade80;"></i>';
+
+
+        statusTitle.textContent =
+          "¡Ubicación lista!";
+
+
+        statusText.textContent =
+          "Abriendo WhatsApp...";
+
+
+        errorActions.classList.remove(
+          "visible"
+        );
+
+
+        /*
+         * Abrir WhatsApp rápidamente.
+         */
+
+        setTimeout(
+          function() {
+
+            abrirWhatsApp(
+              mensajeFinal
+            );
+
+            cerrarEstadoGPS();
+
+          },
+          250
+        );
+
+
+      },
+
+
+      /*
+       * ==================================================
+       * ERROR
+       * ==================================================
+       */
+
+      function(error) {
+
+
+        boton.disabled =
+          false;
+
+
+        boton.innerHTML =
+          contenidoOriginal;
+
+
+        console.error(
+          "ERROR GPS:",
+          error
+        );
+
+
+        mostrarErrorGPS(
+          error
         );
 
       },
-      350
+
+
+      /*
+       * ==================================================
+       * OPCIONES GPS
+       * ==================================================
+       */
+
+      {
+
+        /*
+         * MUY IMPORTANTE:
+         *
+         * Pedimos máxima precisión disponible.
+         */
+
+        enableHighAccuracy:
+          true,
+
+
+        /*
+         * No utilizar ubicación antigua.
+         */
+
+        maximumAge:
+          0,
+
+
+        /*
+         * Límite máximo.
+         *
+         * Si Android obtiene la ubicación
+         * antes, NO espera 30 segundos.
+         */
+
+        timeout:
+          30000
+
+      }
+
     );
 
   }
 
 
   /* =====================================================
-     ESTADO INICIAL
+     MOSTRAR GPS
   ===================================================== */
 
-  function mostrarEstadoInicial() {
-
-    statusTitle.textContent =
-      "Preparando aviso...";
-
-
-    statusText.textContent =
-      "Obteniendo tu ubicación.";
+  function mostrarGPS() {
 
 
     statusIcon.innerHTML =
       '<div class="spinner"></div>';
+
+
+    statusTitle.textContent =
+      "Obteniendo ubicación...";
+
+
+    statusText.textContent =
+      "Espera un momento. Estamos buscando tu ubicación.";
 
 
     errorActions.classList.remove(
@@ -2163,40 +2252,17 @@ Necesito avisar a mis vecinos.
 
 
   /* =====================================================
-     ESTADO EXITOSO
+     ERROR GPS
   ===================================================== */
 
-  function mostrarEstadoExito() {
-
-    statusTitle.textContent =
-      "¡Ubicación lista!";
-
-
-    statusText.textContent =
-      "Abriendo WhatsApp para que puedas enviar el aviso.";
-
-
-    statusIcon.innerHTML =
-      '<i class="bi bi-check-circle-fill" style="color:#4ade80;"></i>';
-
-
-    errorActions.classList.remove(
-      "visible"
-    );
-
-  }
-
-
-  /* =====================================================
-     ERROR DE UBICACIÓN
-  ===================================================== */
-
-  function mostrarErrorUbicacion(
+  function mostrarErrorGPS(
     error
   ) {
 
+
     statusIcon.innerHTML =
-      '<i class="bi bi-geo-alt-fill" style="color:#f87171;"></i>';
+      '<i class="bi bi-geo-alt-fill" ' +
+      'style="color:#f87171;"></i>';
 
 
     statusTitle.textContent =
@@ -2204,7 +2270,7 @@ Necesito avisar a mis vecinos.
 
 
     let texto =
-      "Puedes intentarlo nuevamente o abrir WhatsApp sin ubicación.";
+      "Puedes intentarlo nuevamente.";
 
 
     if (
@@ -2213,7 +2279,7 @@ Necesito avisar a mis vecinos.
     ) {
 
       texto =
-        "El teléfono no permitió usar tu ubicación. Puedes intentar nuevamente o abrir WhatsApp sin ubicación.";
+        "El teléfono no permitió usar la ubicación. Revisa el permiso del navegador.";
 
     }
 
@@ -2224,7 +2290,7 @@ Necesito avisar a mis vecinos.
     ) {
 
       texto =
-        "No pudimos determinar tu ubicación. Comprueba que la ubicación del teléfono esté activada.";
+        "El teléfono no pudo determinar tu ubicación. Comprueba que el GPS/ubicación esté activado.";
 
     }
 
@@ -2235,7 +2301,7 @@ Necesito avisar a mis vecinos.
     ) {
 
       texto =
-        "La ubicación tardó demasiado. No queremos hacerte esperar.";
+        "La ubicación tardó demasiado en responder. Puedes intentarlo nuevamente.";
 
     }
 
@@ -2257,6 +2323,7 @@ Necesito avisar a mis vecinos.
 
   function reintentarUbicacion() {
 
+
     if (
       !emergenciaActual ||
       !botonActual
@@ -2267,35 +2334,44 @@ Necesito avisar a mis vecinos.
     }
 
 
-    mostrarEstadoInicial();
+    /*
+     * Cerramos la pantalla
+     * para volver a iniciar
+     * exactamente el mismo proceso.
+     */
+
+    statusOverlay.classList.remove(
+      "visible"
+    );
 
 
-    obtenerUbicacionRapida()
+    /*
+     * Ejecutar nuevamente
+     * la función que sabemos
+     * que funciona.
+     */
 
-      .then(function(position) {
+    setTimeout(
+      function() {
 
-        procesarUbicacion(
-          position
+        enviarUbicacion(
+          emergenciaActual,
+          botonActual
         );
 
-      })
-
-      .catch(function(error) {
-
-        mostrarErrorUbicacion(
-          error
-        );
-
-      });
+      },
+      150
+    );
 
   }
 
 
   /* =====================================================
-     CONTINUAR SIN UBICACIÓN
+     ABRIR WHATSAPP SIN UBICACIÓN
   ===================================================== */
 
   function continuarSinUbicacion() {
+
 
     if (
       !emergenciaActual
@@ -2307,7 +2383,14 @@ Necesito avisar a mis vecinos.
 
 
     const mensaje =
-      mensajes[emergenciaActual];
+      mensajes[
+        emergenciaActual
+      ];
+
+
+    statusIcon.innerHTML =
+      '<i class="bi bi-whatsapp" ' +
+      'style="color:#4ade80;"></i>';
 
 
     statusTitle.textContent =
@@ -2318,10 +2401,6 @@ Necesito avisar a mis vecinos.
       "El aviso se abrirá sin ubicación.";
 
 
-    statusIcon.innerHTML =
-      '<i class="bi bi-whatsapp" style="color:#4ade80;"></i>';
-
-
     errorActions.classList.remove(
       "visible"
     );
@@ -2330,24 +2409,15 @@ Necesito avisar a mis vecinos.
     setTimeout(
       function() {
 
-        /*
-         * Quitamos "📍 UBICACIÓN:"
-         * porque no existe ubicación.
-         */
-
-        const mensajeSinUbicacion =
-          mensaje.replace(
-            /\n📍 UBICACIÓN:$/,
-            ""
-          );
-
-
         abrirWhatsApp(
-          mensajeSinUbicacion
+          mensaje
         );
 
+
+        cerrarEstadoGPS();
+
       },
-      300
+      250
     );
 
   }
@@ -2359,12 +2429,23 @@ Necesito avisar a mis vecinos.
 
   function cancelarEmergencia() {
 
-    statusOverlay.classList.remove(
-      "visible"
-    );
+    cerrarEstadoGPS();
 
 
     restaurarBoton();
+
+  }
+
+
+  /* =====================================================
+     CERRAR ESTADO GPS
+  ===================================================== */
+
+  function cerrarEstadoGPS() {
+
+    statusOverlay.classList.remove(
+      "visible"
+    );
 
   }
 
@@ -2375,17 +2456,19 @@ Necesito avisar a mis vecinos.
 
   function restaurarBoton() {
 
-    if (!botonActual) {
-      return;
+
+    if (
+      botonActual
+    ) {
+
+      botonActual.disabled =
+        false;
+
+
+      botonActual.innerHTML =
+        contenidoOriginal;
+
     }
-
-
-    botonActual.disabled =
-      false;
-
-
-    botonActual.innerHTML =
-      textoBotonOriginal;
 
 
     botonActual =
@@ -2394,6 +2477,10 @@ Necesito avisar a mis vecinos.
 
     emergenciaActual =
       null;
+
+
+    contenidoOriginal =
+      "";
 
   }
 
@@ -2424,30 +2511,37 @@ Necesito avisar a mis vecinos.
     tipo
   ) {
 
+
     cerrarNecesitoAyuda();
 
 
-    setTimeout(
-      function() {
+    /*
+     * Buscar el botón correspondiente.
+     */
 
-        const boton =
-          document.querySelector(
-            `[onclick="iniciarEmergencia('${tipo}', this)"]`
-          );
+    const boton =
+      document.querySelector(
+        `[onclick="enviarUbicacion('${tipo}', this)"]`
+      );
 
 
-        if (boton) {
+    if (
+      boton
+    ) {
 
-          iniciarEmergencia(
+      setTimeout(
+        function() {
+
+          enviarUbicacion(
             tipo,
             boton
           );
 
-        }
+        },
+        150
+      );
 
-      },
-      150
-    );
+    }
 
   }
 
@@ -2474,27 +2568,7 @@ Necesito avisar a mis vecinos.
 
 
   /* =====================================================
-     ESC
-  ===================================================== */
-
-  document.addEventListener(
-    "keydown",
-    function(event) {
-
-      if (
-        event.key === "Escape"
-      ) {
-
-        cerrarNecesitoAyuda();
-
-      }
-
-    }
-  );
-
-
-  /* =====================================================
-     PWA INSTALL
+     PWA
   ===================================================== */
 
   let deferredPrompt =
@@ -2511,10 +2585,13 @@ Necesito avisar a mis vecinos.
     "beforeinstallprompt",
     function(event) {
 
+
       event.preventDefault();
+
 
       deferredPrompt =
         event;
+
 
       btnInstalar.style.display =
         "block";
@@ -2526,6 +2603,7 @@ Necesito avisar a mis vecinos.
   btnInstalar.addEventListener(
     "click",
     async function() {
+
 
       if (
         !deferredPrompt
@@ -2562,29 +2640,37 @@ Necesito avisar a mis vecinos.
     navigator
   ) {
 
+
     window.addEventListener(
       "load",
       function() {
 
+
         navigator.serviceWorker
           .register("sw.js")
 
-          .then(function() {
 
-            console.log(
-              "Auxilio Vecinal: PWA lista."
-            );
+          .then(
+            function() {
 
-          })
+              console.log(
+                "Auxilio Vecinal: PWA lista."
+              );
 
-          .catch(function(error) {
+            }
+          )
 
-            console.error(
-              "Error registrando Service Worker:",
-              error
-            );
 
-          });
+          .catch(
+            function(error) {
+
+              console.error(
+                "Error registrando Service Worker:",
+                error
+              );
+
+            }
+          );
 
       }
     );
