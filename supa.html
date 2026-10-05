@@ -1,0 +1,961 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Monitor de temperatura</title>
+
+  <!-- Supabase -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: #f4f7fb;
+      color: #1f2937;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    header {
+      background: #0f766e;
+      color: white;
+      padding: 22px;
+      border-radius: 14px;
+      margin-bottom: 20px;
+    }
+
+    header h1 {
+      margin: 0 0 6px;
+      font-size: 26px;
+    }
+
+    header p {
+      margin: 0;
+      opacity: 0.9;
+    }
+
+    .status-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: white;
+      padding: 12px 16px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      font-size: 14px;
+    }
+
+    .online {
+      color: #16a34a;
+      font-weight: bold;
+    }
+
+    .offline {
+      color: #dc2626;
+      font-weight: bold;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 14px;
+      padding: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+
+    .card-title {
+      color: #6b7280;
+      font-size: 14px;
+      margin-bottom: 8px;
+    }
+
+    .card-value {
+      font-size: 30px;
+      font-weight: bold;
+    }
+
+    .temperature {
+      color: #dc2626;
+    }
+
+    .humidity {
+      color: #2563eb;
+    }
+
+    .battery {
+      color: #16a34a;
+    }
+
+    .normal {
+      color: #16a34a;
+    }
+
+    .warning {
+      color: #dc2626;
+    }
+
+    .section {
+      background: white;
+      border-radius: 14px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+
+    .section h2 {
+      margin-top: 0;
+      font-size: 20px;
+    }
+
+    .chart-container {
+      position: relative;
+      height: 350px;
+    }
+
+    .table-container {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 650px;
+    }
+
+    th {
+      background: #f3f4f6;
+      text-align: left;
+      padding: 12px;
+      font-size: 13px;
+    }
+
+    td {
+      padding: 12px;
+      border-bottom: 1px solid #e5e7eb;
+      font-size: 14px;
+    }
+
+    tr:hover {
+      background: #f9fafb;
+    }
+
+    .error {
+      background: #fee2e2;
+      color: #991b1b;
+      padding: 15px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      display: none;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 30px;
+      color: #6b7280;
+    }
+
+    footer {
+      text-align: center;
+      color: #6b7280;
+      font-size: 13px;
+      padding: 10px;
+    }
+
+    @media (max-width: 800px) {
+      .cards {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 500px) {
+      .container {
+        padding: 10px;
+      }
+
+      header h1 {
+        font-size: 22px;
+      }
+
+      .cards {
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+      }
+
+      .card {
+        padding: 15px;
+      }
+
+      .card-value {
+        font-size: 24px;
+      }
+
+      .chart-container {
+        height: 280px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="container">
+
+  <header>
+    <h1>🌡️ Monitor de temperatura</h1>
+    <p id="sensorName">Cargando sensor...</p>
+  </header>
+
+  <div class="status-bar">
+    <div>
+      Estado de conexión:
+      <span id="connectionStatus" class="online">
+        Conectando...
+      </span>
+    </div>
+
+    <div>
+      Última actualización:
+      <span id="lastUpdate">--</span>
+    </div>
+  </div>
+
+  <div id="errorMessage" class="error"></div>
+
+  <div class="cards">
+
+    <div class="card">
+      <div class="card-title">Temperatura</div>
+      <div id="currentTemperature" class="card-value temperature">
+        --
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Humedad</div>
+      <div id="currentHumidity" class="card-value humidity">
+        --
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Batería</div>
+      <div id="currentBattery" class="card-value battery">
+        --
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Estado sensor</div>
+      <div id="currentStatus" class="card-value normal">
+        --
+      </div>
+    </div>
+
+  </div>
+
+  <div class="section">
+
+    <h2>📈 Temperatura — últimas 24 horas</h2>
+
+    <div class="chart-container">
+      <canvas id="temperatureChart"></canvas>
+    </div>
+
+  </div>
+
+  <div class="section">
+
+    <h2>📋 Últimas mediciones</h2>
+
+    <div id="tableLoading" class="loading">
+      Cargando mediciones...
+    </div>
+
+    <div class="table-container">
+
+      <table id="readingsTable" style="display:none;">
+
+        <thead>
+          <tr>
+            <th>Fecha / hora</th>
+            <th>Temperatura</th>
+            <th>Humedad</th>
+            <th>Batería</th>
+            <th>Sensor</th>
+            <th>Dispositivo</th>
+          </tr>
+        </thead>
+
+        <tbody id="readingsBody"></tbody>
+
+      </table>
+
+    </div>
+
+  </div>
+
+  <footer>
+    Monitor de sensores · Supabase
+  </footer>
+
+</div>
+
+<script>
+
+  // ==========================================================
+  // CONFIGURACIÓN SUPABASE
+  // ==========================================================
+
+  const SUPABASE_URL =
+    "TU_SUPABASE_URL";
+
+  const SUPABASE_PUBLISHABLE_KEY =
+    "TU_PUBLISHABLE_KEY";
+
+
+  const { createClient } =
+    supabase;
+
+  const db =
+    createClient(
+      SUPABASE_URL,
+      SUPABASE_PUBLISHABLE_KEY
+    );
+
+
+  // ==========================================================
+  // CONFIGURACIÓN
+  // ==========================================================
+
+  const SENSOR_ID = 1;
+
+  let temperatureChart = null;
+
+
+  // ==========================================================
+  // FORMATEAR FECHA
+  // Ciudad de México
+  // ==========================================================
+
+  function formatearFecha(fecha) {
+
+    if (!fecha) {
+      return "--";
+    }
+
+    return new Intl.DateTimeFormat(
+      "es-MX",
+      {
+        timeZone: "America/Mexico_City",
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit"
+      }
+    ).format(
+      new Date(fecha)
+    );
+  }
+
+
+  // ==========================================================
+  // ESTADO DEL SENSOR
+  // ==========================================================
+
+  function estadoSensor(estado) {
+
+    if (estado === 0) {
+      return "NORMAL";
+    }
+
+    if (estado === 1) {
+      return "SONDA";
+    }
+
+    if (estado === 2) {
+      return "ERROR";
+    }
+
+    return estado ?? "--";
+  }
+
+
+  // ==========================================================
+  // CARGAR NOMBRE DEL SENSOR
+  // ==========================================================
+
+  async function cargarSensor() {
+
+    const { data, error } =
+      await db
+        .from("Sensors")
+        .select("id, device_id, name, active")
+        .eq("id", SENSOR_ID)
+        .single();
+
+    if (error) {
+      throw new Error(
+        "Error consultando Sensors: " +
+        error.message
+      );
+    }
+
+    if (!data) {
+      throw new Error(
+        "No se encontró el sensor."
+      );
+    }
+
+    document.getElementById(
+      "sensorName"
+    ).textContent =
+      data.name +
+      " · Device ID: " +
+      data.device_id;
+  }
+
+
+  // ==========================================================
+  // CARGAR MEDICIONES
+  // ==========================================================
+
+  async function cargarMediciones() {
+
+    const { data, error } =
+      await db
+        .from("temperature_readings")
+        .select(
+          `
+          id,
+          sensor_id,
+          temperature,
+          humidity,
+          data_time,
+          sensor_status,
+          device_status,
+          battery,
+          created_at
+          `
+        )
+        .eq("sensor_id", SENSOR_ID)
+        .order(
+          "id",
+          {
+            ascending: false
+          }
+        )
+        .limit(300);
+
+    if (error) {
+
+      throw new Error(
+        "Error consultando mediciones: " +
+        error.message
+      );
+
+    }
+
+    if (!data || data.length === 0) {
+
+      throw new Error(
+        "No existen mediciones."
+      );
+
+    }
+
+    return data;
+  }
+
+
+  // ==========================================================
+  // MOSTRAR MEDICIÓN ACTUAL
+  // ==========================================================
+
+  function mostrarActual(
+    mediciones
+  ) {
+
+    const actual =
+      mediciones[0];
+
+    document.getElementById(
+      "currentTemperature"
+    ).textContent =
+      Number(
+        actual.temperature
+      ).toFixed(1) +
+      " °C";
+
+
+    document.getElementById(
+      "currentHumidity"
+    ).textContent =
+      actual.humidity !== null
+        ? Number(
+            actual.humidity
+          ).toFixed(1) + " %"
+        : "--";
+
+
+    document.getElementById(
+      "currentBattery"
+    ).textContent =
+      actual.battery !== null
+        ? Number(
+            actual.battery
+          ).toFixed(0) + " %"
+        : "--";
+
+
+    const estado =
+      estadoSensor(
+        actual.sensor_status
+      );
+
+
+    const estadoElemento =
+      document.getElementById(
+        "currentStatus"
+      );
+
+    estadoElemento.textContent =
+      estado;
+
+    estadoElemento.className =
+      "card-value " +
+      (
+        actual.sensor_status === 0
+          ? "normal"
+          : "warning"
+      );
+
+
+    document.getElementById(
+      "lastUpdate"
+    ).textContent =
+      formatearFecha(
+        actual.created_at
+      );
+  }
+
+
+  // ==========================================================
+  // MOSTRAR TABLA
+  // ==========================================================
+
+  function mostrarTabla(
+    mediciones
+  ) {
+
+    const body =
+      document.getElementById(
+        "readingsBody"
+      );
+
+    body.innerHTML = "";
+
+
+    mediciones
+      .slice(0, 50)
+      .forEach(
+        medicion => {
+
+          const row =
+            document.createElement(
+              "tr"
+            );
+
+
+          row.innerHTML = `
+
+            <td>
+              ${formatearFecha(
+                medicion.created_at
+              )}
+            </td>
+
+            <td>
+              <strong>
+                ${Number(
+                  medicion.temperature
+                ).toFixed(1)}
+                °C
+              </strong>
+            </td>
+
+            <td>
+              ${
+                medicion.humidity !== null
+                  ? Number(
+                      medicion.humidity
+                    ).toFixed(1) + " %"
+                  : "--"
+              }
+            </td>
+
+            <td>
+              ${
+                medicion.battery !== null
+                  ? Number(
+                      medicion.battery
+                    ).toFixed(0) + " %"
+                  : "--"
+              }
+            </td>
+
+            <td>
+              ${estadoSensor(
+                medicion.sensor_status
+              )}
+            </td>
+
+            <td>
+              ${
+                medicion.device_status ?? "--"
+              }
+            </td>
+
+          `;
+
+          body.appendChild(row);
+
+        }
+      );
+
+
+    document.getElementById(
+      "tableLoading"
+    ).style.display =
+      "none";
+
+    document.getElementById(
+      "readingsTable"
+    ).style.display =
+      "table";
+  }
+
+
+  // ==========================================================
+  // GRÁFICA
+  // ==========================================================
+
+  function mostrarGrafica(
+    mediciones
+  ) {
+
+    const ahora =
+      Date.now();
+
+    const hace24Horas =
+      ahora -
+      (
+        24 *
+        60 *
+        60 *
+        1000
+      );
+
+
+    const datos =
+      mediciones
+        .filter(
+          medicion => {
+
+            const tiempo =
+              medicion.created_at
+                ? new Date(
+                    medicion.created_at
+                  ).getTime()
+                : 0;
+
+            return tiempo >=
+              hace24Horas;
+
+          }
+        )
+        .reverse();
+
+
+    const labels =
+      datos.map(
+        medicion =>
+          formatearFecha(
+            medicion.created_at
+          )
+      );
+
+
+    const valores =
+      datos.map(
+        medicion =>
+          Number(
+            medicion.temperature
+          )
+      );
+
+
+    const ctx =
+      document
+        .getElementById(
+          "temperatureChart"
+        )
+        .getContext("2d");
+
+
+    if (temperatureChart) {
+      temperatureChart.destroy();
+    }
+
+
+    temperatureChart =
+      new Chart(
+        ctx,
+        {
+
+          type: "line",
+
+          data: {
+
+            labels,
+
+            datasets: [
+
+              {
+
+                label:
+                  "Temperatura °C",
+
+                data:
+                  valores,
+
+                borderColor:
+                  "#dc2626",
+
+                backgroundColor:
+                  "rgba(220, 38, 38, 0.10)",
+
+                borderWidth:
+                  2,
+
+                fill:
+                  true,
+
+                tension:
+                  0.3,
+
+                pointRadius:
+                  2
+
+              }
+
+            ]
+
+          },
+
+          options: {
+
+            responsive:
+              true,
+
+            maintainAspectRatio:
+              false,
+
+            scales: {
+
+              y: {
+
+                title: {
+
+                  display:
+                    true,
+
+                  text:
+                    "°C"
+
+                }
+
+              },
+
+              x: {
+
+                ticks: {
+
+                  maxTicksLimit:
+                    12
+
+                }
+
+              }
+
+            },
+
+            plugins: {
+
+              legend: {
+
+                display:
+                  true
+
+              }
+
+            }
+
+          }
+
+        }
+      );
+
+  }
+
+
+  // ==========================================================
+  // CARGAR TODO
+  // ==========================================================
+
+  async function cargarTodo() {
+
+    try {
+
+      ocultarError();
+
+      const mediciones =
+        await cargarMediciones();
+
+      mostrarActual(
+        mediciones
+      );
+
+      mostrarTabla(
+        mediciones
+      );
+
+      mostrarGrafica(
+        mediciones
+      );
+
+
+      document.getElementById(
+        "connectionStatus"
+      ).textContent =
+        "Conectado";
+
+      document.getElementById(
+        "connectionStatus"
+      ).className =
+        "online";
+
+
+    } catch (error) {
+
+      console.error(
+        error
+      );
+
+      mostrarError(
+        error.message
+      );
+
+      document.getElementById(
+        "connectionStatus"
+      ).textContent =
+        "Error";
+
+      document.getElementById(
+        "connectionStatus"
+      ).className =
+        "offline";
+
+    }
+
+  }
+
+
+  // ==========================================================
+  // MENSAJES DE ERROR
+  // ==========================================================
+
+  function mostrarError(
+    mensaje
+  ) {
+
+    const elemento =
+      document.getElementById(
+        "errorMessage"
+      );
+
+    elemento.textContent =
+      mensaje;
+
+    elemento.style.display =
+      "block";
+  }
+
+
+  function ocultarError() {
+
+    document.getElementById(
+      "errorMessage"
+    ).style.display =
+      "none";
+  }
+
+
+  // ==========================================================
+  // INICIAR
+  // ==========================================================
+
+  cargarSensor()
+    .catch(
+      error => {
+
+        mostrarError(
+          error.message
+        );
+
+      }
+    );
+
+
+  cargarTodo();
+
+
+  // ==========================================================
+  // ACTUALIZAR CADA 5 MINUTOS
+  // ==========================================================
+
+  setInterval(
+    () => {
+
+      cargarTodo();
+
+    },
+    5 * 60 * 1000
+  );
+
+</script>
+
+</body>
+</html>
