@@ -689,6 +689,231 @@ async function refreshData() {
 
 
 
+function renderChart(readings, start, end) {
+  if (typeof window.Chart !== "function") {
+    log("Chart.js no está disponible.", undefined, "error");
+    return;
+  }
+
+  try {
+    const datasets = [0, 1, 2].map(p => {
+      const sensor = Object.values(sensors).find(s => s.probe === p);
+
+      return {
+        label: sensor ? sensor.name : "Sonda " + p,
+        data: readings
+          .filter(r => r.sensor && r.sensor.probe === p)
+          .filter(r =>
+            r.temperature !== null &&
+            r.temperature !== undefined &&
+            r.temperature !== "" &&
+            Number.isFinite(Number(r.temperature))
+          )
+          .map(r => ({
+            x: r.date.getTime(),
+            y: Number(r.temperature)
+          })),
+        borderColor: COLORS[p],
+        backgroundColor: COLORS[p],
+        borderWidth: 2,
+        pointRadius: hours === 1 ? 3 : 1,
+        tension: 0.2
+      };
+    });
+
+    if (chart) chart.destroy();
+
+    chart = new Chart($("chart"), {
+      type: "line",
+      data: { datasets },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: {
+          mode: "nearest",
+          intersect: false
+        },
+        plugins: {
+          legend: {
+            position: "bottom",
+            labels: { color: "#cbd5e1" }
+          },
+          tooltip: {
+            callbacks: {
+              title(items) {
+                return items.length
+                  ? fmtDate(items[0].parsed.x)
+                  : "";
+              },
+              label(ctx) {
+                return ctx.dataset.label + ": " +
+                  ctx.parsed.y.toFixed(1) + " °C";
+              }
+            }
+          }
+        },
+        scales: {
+          x: {
+            type: "time",
+            min: start.getTime(),
+            max: end.getTime(),
+            time: {
+              displayFormats: {
+                minute: "HH:mm",
+                hour: "dd/MM HH:mm",
+                day: "dd/MM"
+              }
+            },
+            ticks: {
+              color: "#9aabc2",
+              maxTicksLimit: 8
+            },
+            grid: {
+              color: "rgba(148,163,184,.1)"
+            }
+          },
+          y: {
+            title: {
+              display: true,
+              text: "Temperatura (°C)",
+              color: "#9aabc2"
+            },
+            ticks: {
+              color: "#9aabc2",
+              callback: v => v + " °C"
+            },
+            grid: {
+              color: "rgba(148,163,184,.1)"
+            }
+          }
+        }
+      }
+    });
+
+    log("Gráfica actualizada correctamente.");
+
+  } catch (error) {
+    log(
+      "Error al dibujar la gráfica",
+      errorDetails(error),
+      "error"
+    );
+  }
+}
+
+// =====================================================
+// BOTONES PARA SELECCIONAR EL PERIODO
+// =====================================================
+
+document.querySelectorAll("[data-hours]").forEach(button => {
+  button.addEventListener("click", () => {
+    hours = Number(button.dataset.hours);
+
+    document.querySelectorAll("[data-hours]").forEach(b => {
+      b.classList.toggle("active", b === button);
+    });
+
+    log("Periodo seleccionado: " + hours + " horas.");
+    refreshData();
+  });
+});
+
+// =====================================================
+// BOTÓN DE ACTUALIZACIÓN MANUAL
+// =====================================================
+
+$("refresh").addEventListener("click", refreshData);
+
+// =====================================================
+// COPIAR EL DIAGNÓSTICO
+// =====================================================
+
+$("copyLog").addEventListener("click", async () => {
+  const text = logLines.join("\n");
+
+  try {
+    if (navigator.clipboard && window.isSecureContext) {
+      await navigator.clipboard.writeText(text);
+    } else {
+      const area = document.createElement("textarea");
+      area.value = text;
+      area.style.position = "fixed";
+      area.style.opacity = "0";
+
+      document.body.appendChild(area);
+      area.select();
+
+      const copied = document.execCommand("copy");
+      area.remove();
+
+      if (!copied) {
+        throw new Error("No se pudo copiar el diagnóstico.");
+      }
+    }
+
+    $("copyLog").textContent = "Copiado";
+
+    setTimeout(() => {
+      $("copyLog").textContent = "Copiar diagnóstico";
+    }, 2000);
+
+  } catch (error) {
+    log(
+      "No se pudo copiar automáticamente. Selecciona el texto del diagnóstico.",
+      error.message,
+      "warn"
+    );
+  }
+});
+
+// =====================================================
+// CAPTURA DE ERRORES DEL NAVEGADOR
+// =====================================================
+
+window.addEventListener("error", event => {
+  const message = event.message || "Error de JavaScript";
+
+  log("ERROR DEL NAVEGADOR", {
+    mensaje: message,
+    archivo: event.filename,
+    linea: event.lineno,
+    columna: event.colno
+  }, "error");
+
+  if ($("status")) {
+    showError(message);
+  }
+});
+
+window.addEventListener("unhandledrejection", event => {
+  log(
+    "ERROR ASÍNCRONO",
+    errorDetails(event.reason),
+    "error"
+  );
+
+  if ($("status")) {
+    showError(
+      event.reason && event.reason.message
+        ? event.reason.message
+        : String(event.reason)
+    );
+  }
+});
+
+// =====================================================
+// INICIO DEL MONITOR
+// =====================================================
+
+log("Programa cargado. Iniciando conexión con Supabase...");
+refreshData();
+
+// Actualizar cada cinco minutos.
+setInterval(refreshData, 5 * 60 * 1000);
+
+</script>
+</body>
+</html>
 
   
   
