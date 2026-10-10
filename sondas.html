@@ -1,0 +1,564 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Freshliance | Monitor de temperatura</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/luxon@3/build/global/luxon.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-luxon@1"></script>
+
+  <style>
+    :root {
+      --bg: #0b1120;
+      --panel: #141e30;
+      --border: #28354b;
+      --text: #f1f5f9;
+      --muted: #9aabc2;
+      --c0: #38bdf8;
+      --c1: #fb923c;
+      --c2: #4ade80;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: system-ui, sans-serif;
+    }
+
+    .container {
+      width: min(1450px, 100%);
+      margin: auto;
+      padding: 24px;
+    }
+
+    header, .toolbar, .heading {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 14px;
+    }
+
+    header { margin-bottom: 24px; }
+    h1 { margin: 0 0 8px; font-size: clamp(24px, 4vw, 34px); }
+    h2 { margin: 0; font-size: 17px; }
+    p { color: var(--muted); }
+    .subtitle { margin: 0; }
+
+    .status {
+      padding: 10px 14px;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      color: var(--muted);
+    }
+
+    .toolbar { margin-bottom: 20px; }
+    .periods { display: flex; flex-wrap: wrap; gap: 8px; }
+
+    button {
+      padding: 10px 15px;
+      color: var(--text);
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      cursor: pointer;
+      font: inherit;
+    }
+
+    button.active {
+      background: #075985;
+      border-color: var(--c0);
+    }
+
+    button:disabled { opacity: .5; }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .panel, .metric {
+      min-width: 0;
+      padding: 20px;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 15px;
+    }
+
+    .metric-label {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      color: var(--muted);
+      margin-bottom: 15px;
+    }
+
+    .dot {
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+
+    .value {
+      font-size: clamp(28px, 4vw, 38px);
+      font-weight: 700;
+    }
+
+    .unit { font-size: 15px; color: var(--muted); font-weight: 400; }
+    .small { color: var(--muted); font-size: 12px; }
+    .metric-footer { margin-top: 12px; line-height: 1.8; }
+
+    .heading { margin-bottom: 20px; }
+    .chart-wrap { height: 370px; position: relative; }
+
+    .table-wrap {
+      width: 100%;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    table {
+      width: 100%;
+      min-width: 760px;
+      border-collapse: collapse;
+      text-align: left;
+    }
+
+    th, td {
+      padding: 13px 12px;
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+    }
+
+    th {
+      color: var(--muted);
+      font-size: 11px;
+      text-transform: uppercase;
+    }
+
+    .error {
+      display: none;
+      padding: 14px;
+      margin-bottom: 18px;
+      border: 1px solid #fb7185;
+      border-radius: 9px;
+      background: #35151e;
+      color: #fecdd3;
+      overflow-wrap: anywhere;
+    }
+
+    .empty { padding: 30px; text-align: center; color: var(--muted); }
+    footer { text-align: center; color: var(--muted); font-size: 12px; padding: 18px; }
+
+    @media (max-width: 700px) {
+      .container { padding: 14px; }
+      .cards { grid-template-columns: 1fr; gap: 12px; }
+      .metric, .panel { padding: 15px; }
+      .chart-wrap { height: 310px; }
+      .periods { width: 100%; }
+      .periods button { flex: 1; padding: 10px 6px; }
+    }
+  </style>
+</head>
+
+<body>
+<main class="container">
+
+  <header>
+    <div>
+      <h1>Monitor de temperatura</h1>
+      <p class="subtitle">Freshliance · Historial de tres sondas</p>
+    </div>
+    <div class="status" id="status">Conectando con Supabase...</div>
+  </header>
+
+  <div id="error" class="error" role="alert"></div>
+
+  <section class="toolbar">
+    <div class="periods">
+      <button data-hours="1">1 hora</button>
+      <button data-hours="12">12 horas</button>
+      <button data-hours="24" class="active">24 horas</button>
+      <button data-hours="32">32 horas</button>
+    </div>
+    <div>
+      <button id="refresh">↻ Actualizar ahora</button>
+      <div id="updated" class="small" style="margin-top:8px"></div>
+    </div>
+  </section>
+
+  <section class="cards">
+    <article class="metric">
+      <div class="metric-label">
+        <span class="dot" style="background:var(--c0)"></span>
+        <span id="name0">Sonda 0</span>
+      </div>
+      <div class="value" id="temp0">-- <span class="unit">°C</span></div>
+      <div class="metric-footer small">
+        Humedad: <span id="hum0">--</span><br>
+        Última lectura: <span id="time0">--</span>
+      </div>
+    </article>
+
+    <article class="metric">
+      <div class="metric-label">
+        <span class="dot" style="background:var(--c1)"></span>
+        <span id="name1">Sonda 1</span>
+      </div>
+      <div class="value" id="temp1">-- <span class="unit">°C</span></div>
+      <div class="metric-footer small">
+        Humedad: <span id="hum1">--</span><br>
+        Última lectura: <span id="time1">--</span>
+      </div>
+    </article>
+
+    <article class="metric">
+      <div class="metric-label">
+        <span class="dot" style="background:var(--c2)"></span>
+        <span id="name2">Sonda 2</span>
+      </div>
+      <div class="value" id="temp2">-- <span class="unit">°C</span></div>
+      <div class="metric-footer small">
+        Humedad: <span id="hum2">--</span><br>
+        Última lectura: <span id="time2">--</span>
+      </div>
+    </article>
+  </section>
+
+  <section class="panel" style="margin-bottom:20px">
+    <div class="heading">
+      <div>
+        <h2>Gráfica de temperaturas</h2>
+        <div id="periodLabel" class="small" style="margin-top:6px">Últimas 24 horas</div>
+      </div>
+      <span class="small">Temperatura en °C</span>
+    </div>
+    <div class="chart-wrap">
+      <canvas id="chart"></canvas>
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="heading">
+      <h2>Tabla de mediciones</h2>
+      <span id="count" class="small">0 registros</span>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Fecha y hora</th>
+            <th>Sonda</th>
+            <th>Temperatura</th>
+            <th>Humedad</th>
+            <th>Estado sensor</th>
+            <th>Estado dispositivo</th>
+            <th>Batería</th>
+          </tr>
+        </thead>
+        <tbody id="tableBody">
+          <tr><td colspan="7" class="empty">Cargando...</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="small">En móvil, desliza la tabla horizontalmente para consultar todas las columnas.</p>
+  </section>
+
+  <footer>Actualización automática cada cinco minutos.</footer>
+</main>
+
+<script>
+"use strict";
+
+// ==================================================
+// CONFIGURA TUS DATOS AQUÍ
+// ==================================================
+const SUPABASE_URL = "https://TU-PROYECTO.supabase.co";
+const SUPABASE_KEY = "TU_CLAVE_PUBLICA_DE_SUPABASE";
+const DEVICE_ID = "TU_DEVICE_ID";
+
+const COLORS = {
+  0: "#38bdf8",
+  1: "#fb923c",
+  2: "#4ade80"
+};
+
+const supabase = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+);
+
+const $ = id => document.getElementById(id);
+let sensors = {};
+let hours = 24;
+let chart = null;
+let busy = false;
+
+function formatDate(value) {
+  if (!value) return "--";
+  const d = new Date(value);
+  if (Number.isNaN(d.getTime())) return "--";
+  return new Intl.DateTimeFormat("es-MX", {
+    year: "numeric", month: "2-digit", day: "2-digit",
+    hour: "2-digit", minute: "2-digit", second: "2-digit",
+    hour12: false
+  }).format(d);
+}
+
+function number(value) {
+  if (value === null || value === undefined || value === "") return "--";
+  const n = Number(value);
+  return Number.isFinite(n) ? n.toFixed(1) : "--";
+}
+
+function safe(value) {
+  return String(value ?? "--").replace(/[&<>"']/g, c => ({
+    "&":"&amp;", "<":"&lt;", ">":"&gt;",
+    '"':"&quot;", "'":"&#39;"
+  })[c]);
+}
+
+function showError(message) {
+  $("error").textContent = message;
+  $("error").style.display = "block";
+  $("status").textContent = "Error de conexión";
+}
+
+async function loadSensors() {
+  const { data, error } = await supabase
+    .from("Sensors")
+    .select("id,name,device_id,probe_type,active")
+    .eq("device_id", DEVICE_ID)
+    .eq("active", true);
+
+  if (error) throw new Error("Error en Sensors: " + error.message);
+
+  const next = {};
+  for (const s of data || []) {
+    const p = Number(s.probe_type);
+    if (![0,1,2].includes(p)) continue;
+    next[String(s.id)] = {
+      id: s.id,
+      probe: p,
+      name: s.name || "Sonda " + p
+    };
+  }
+
+  const probes = Object.values(next).map(s => s.probe);
+  if (Object.keys(next).length !== 3 ||
+      new Set(probes).size !== 3 ||
+      ![0,1,2].every(p => probes.includes(p))) {
+    throw new Error(
+      "Se necesitan tres sondas activas con probe_type 0, 1 y 2. " +
+      "Comprueba DEVICE_ID y la tabla Sensors."
+    );
+  }
+
+  sensors = next;
+
+  for (const s of Object.values(sensors)) {
+    $("name" + s.probe).textContent = s.name + " · ID " + s.id;
+  }
+}
+
+async function refreshData() {
+  if (busy) return;
+  busy = true;
+  $("refresh").disabled = true;
+  $("status").textContent = "Actualizando...";
+  $("error").style.display = "none";
+
+  try {
+    if (Object.keys(sensors).length !== 3) await loadSensors();
+
+    const end = new Date();
+    const start = new Date(end.getTime() - hours * 3600000);
+
+    const { data, error } = await supabase
+      .from("temperature_readings")
+      .select(
+        "id,created_at,sensor_id,temperature,humidity,data_time," +
+        "sensor_status,device_status,battery"
+      )
+      .gte("created_at", start.toISOString())
+      .lte("created_at", end.toISOString())
+      .order("created_at", { ascending: true })
+      .limit(5000);
+
+    if (error) throw new Error("Error en temperature_readings: " + error.message);
+
+    const readings = (data || [])
+      .map(r => ({
+        ...r,
+        sensor: sensors[String(r.sensor_id)],
+        date: new Date(r.created_at)
+      }))
+      .filter(r =>
+        r.sensor &&
+        Number.isFinite(r.date.getTime()) &&
+        r.date >= start && r.date <= end
+      );
+
+    renderCards(readings);
+    renderChart(readings, start, end);
+    renderTable(readings);
+
+    $("updated").textContent = "Actualizado: " + formatDate(new Date());
+    $("periodLabel").textContent = "Últimas " + hours + " horas";
+    $("status").textContent = "Conectado · Datos actualizados";
+  } catch (e) {
+    console.error(e);
+    showError((e.message || String(e)) +
+      " Comprueba la URL, la clave pública, DEVICE_ID y las políticas RLS.");
+  } finally {
+    busy = false;
+    $("refresh").disabled = false;
+  }
+}
+
+function renderCards(readings) {
+  for (const p of [0,1,2]) {
+    const sensor = Object.values(sensors).find(s => s.probe === p);
+    if (!sensor) continue;
+
+    const list = readings
+      .filter(r => String(r.sensor_id) === String(sensor.id))
+      .sort((a,b) => b.date - a.date);
+    const r = list[0];
+
+    $("temp" + p).innerHTML = r
+      ? safe(number(r.temperature)) + ' <span class="unit">°C</span>'
+      : '-- <span class="unit">°C</span>';
+
+    $("hum" + p).textContent = r && r.humidity != null
+      ? number(r.humidity) + " %"
+      : "--";
+
+    $("time" + p).textContent = r ? formatDate(r.date) : "Sin lecturas";
+  }
+}
+
+function renderChart(readings, start, end) {
+  const datasets = [0,1,2].map(p => {
+    const sensor = Object.values(sensors).find(s => s.probe === p);
+
+    return {
+      label: sensor.name,
+      data: readings
+        .filter(r => r.sensor.probe === p && r.temperature != null)
+        .map(r => ({ x: r.date.getTime(), y: Number(r.temperature) }))
+        .filter(point => Number.isFinite(point.y)),
+      borderColor: COLORS[p],
+      backgroundColor: COLORS[p],
+      borderWidth: 2,
+      pointRadius: hours === 1 ? 3 : 1,
+      pointHoverRadius: 5,
+      tension: 0.2,
+      spanGaps: false
+    };
+  });
+
+  if (chart) chart.destroy();
+
+  chart = new Chart($("chart"), {
+    type: "line",
+    data: { datasets },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      interaction: { mode: "nearest", intersect: false, axis: "x" },
+      plugins: {
+        legend: {
+          position: "bottom",
+          labels: { color: "#cbd5e1", usePointStyle: true, padding: 20 }
+        },
+        tooltip: {
+          callbacks: {
+            title(items) {
+              return items.length ? formatDate(items[0].parsed.x) : "";
+            },
+            label(ctx) {
+              return ctx.dataset.label + ": " + ctx.parsed.y.toFixed(1) + " °C";
+            }
+          }
+        }
+      },
+      scales: {
+        x: {
+          type: "time",
+          min: start.getTime(),
+          max: end.getTime(),
+          time: {
+            displayFormats: {
+              minute: "HH:mm",
+              hour: "dd/MM HH:mm",
+              day: "dd/MM"
+            },
+            tooltipFormat: "dd/MM/yyyy HH:mm:ss"
+          },
+          ticks: { color: "#9aabc2", maxTicksLimit: 8 },
+          grid: { color: "rgba(148,163,184,.1)" }
+        },
+        y: {
+          title: { display: true, text: "Temperatura (°C)", color: "#9aabc2" },
+          ticks: { color: "#9aabc2", callback: v => v + " °C" },
+          grid: { color: "rgba(148,163,184,.1)" }
+        }
+      }
+    }
+  });
+}
+
+function renderTable(readings) {
+  const rows = [...readings].sort((a,b) => b.date - a.date);
+  $("count").textContent = rows.length + " registros";
+
+  if (!rows.length) {
+    $("tableBody").innerHTML =
+      '<tr><td colspan="7" class="empty">No hay mediciones en este periodo.</td></tr>';
+    return;
+  }
+
+  $("tableBody").innerHTML = rows.map(r => {
+    const p = r.sensor.probe;
+    return `<tr>
+      <td>${safe(formatDate(r.date))}</td>
+      <td><span class="dot" style="background:${COLORS[p]}"></span>
+        ${safe(r.sensor.name)}</td>
+      <td style="color:${COLORS[p]};font-weight:bold">${safe(number(r.temperature))} °C</td>
+      <td>${r.humidity == null ? "--" : safe(number(r.humidity)) + " %"}</td>
+      <td>${safe(r.sensor_status)}</td>
+      <td>${safe(r.device_status)}</td>
+      <td>${r.battery == null ? "--" : safe(number(r.battery))}</td>
+    </tr>`;
+  }).join("");
+}
+
+document.querySelectorAll("[data-hours]").forEach(button => {
+  button.addEventListener("click", () => {
+    hours = Number(button.dataset.hours);
+    document.querySelectorAll("[data-hours]").forEach(b =>
+      b.classList.toggle("active", b === button)
+    );
+    refreshData();
+  });
+});
+
+$("refresh").addEventListener("click", refreshData);
+
+refreshData();
+setInterval(refreshData, 5 * 60 * 1000);
+</script>
+</body>
+</html>
