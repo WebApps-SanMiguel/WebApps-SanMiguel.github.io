@@ -649,12 +649,14 @@ async function refreshData() {
     const start = new Date(end.getTime() - hours * 60 * 60 * 1000);
 
     const rows = await queryReadings(start, end);
-    const readings = prepareReadings(rows, start, end);
+const readings = prepareReadings(rows, start, end);
 
-    renderCards(readings);
-    renderTable(readings);
+// Actualizar tarjetas, gráfica y tabla.
+renderCards(readings);
+renderChart(readings, start, end);
+renderTable(readings);
 
-    $("periodLabel").textContent = "Últimas " + hours + " horas";
+$("periodLabel").textContent = "Últimas " + hours + " horas";
 
     if (rows.length === 0) {
       setStatus("Conectado, sin mediciones en el periodo");
